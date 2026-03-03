@@ -9,6 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $customer_pct = (int) OE_Ambassador::setting( 'customer_coupon_pct', 10 );
 $tiers        = OE_Ambassador::get_tiers();
 $site_name    = get_bloginfo( 'name' );
+$terms_url    = OE_Ambassador::setting( 'terms_page_url', '' );
+// Fallback: find a page with 'terms' or 'privacy' in its slug
+if ( ! $terms_url ) {
+    $terms_page = get_page_by_path( 'terms-conditions' ) ?: get_page_by_path( 'terms' );
+    $terms_url  = $terms_page ? get_permalink( $terms_page ) : home_url( '/' );
+}
 
 // Pre-fill from logged-in user
 $prefill_first = '';
@@ -135,7 +141,7 @@ if ( is_user_logged_in() ) {
                     <input type="checkbox" name="consent" required>
                     <?php printf(
                         esc_html__( 'I agree to the %s and the ambassador program terms.', 'oe-ambassador' ),
-                        '<a href="' . esc_url( home_url( '/kopvillkor' ) ) . '" target="_blank">' . esc_html__( 'Terms & Conditions', 'oe-ambassador' ) . '</a>'
+                        '<a href="' . esc_url( $terms_url ) . '" target="_blank">' . esc_html__( 'Terms & Conditions', 'oe-ambassador' ) . '</a>'
                     ); ?>
                 </label>
             </div>

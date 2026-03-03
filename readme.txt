@@ -1,7 +1,7 @@
 == OE Ambassador – Brand Ambassador Management ==
 
 Contributors: optimumessence
-Tags: ambassador, affiliate, referral, commission, woocommerce, marketing
+Tags: ambassador, referral, commission, woocommerce, affiliate
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
@@ -44,9 +44,9 @@ A complete brand ambassador management system for WooCommerce — configurable t
 
 1. Upload the `oe-ambassador` folder to `/wp-content/plugins/`.
 2. Activate through the **Plugins** menu.
-3. Go to **Ambassadors → Settings** to configure tiers and pages.
-4. Create two pages — one with `[oe_amb_apply]`, one with `[oe_amb_portal]`.
-5. Set those pages in Settings.
+3. Two pages are created automatically: **Become an Ambassador** (with `[oe_amb_apply]`) and **Ambassador Portal** (with `[oe_amb_portal]`).
+4. A setup checklist notice appears in WP Admin to guide you through the remaining steps.
+5. Go to **Ambassadors → Settings** to configure tiers, email settings, and coupon percentages.
 
 == Frequently Asked Questions ==
 

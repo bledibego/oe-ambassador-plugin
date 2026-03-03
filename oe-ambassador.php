@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       OE Ambassador – Brand Ambassador Management
- * Plugin URI:        https://github.com/optimumessence/oe-ambassador
+ * Plugin URI:        https://github.com/bledibego/oe-ambassador-plugin
  * Description:       Complete brand ambassador management for WooCommerce. Configurable tiers, commission tracking, discount codes, self-purchase codes, free products, social sharing, and email reports.
  * Version:           1.0.0
  * Author:            OptimumEssence

@@ -35,6 +35,27 @@ class OE_Amb_Admin {
 		// AJAX for inline status changes
 		add_action( 'wp_ajax_oe_amb_quick_status',      [ $this, 'ajax_quick_status' ] );
 		add_action( 'wp_ajax_oe_amb_dismiss_setup',     [ $this, 'ajax_dismiss_setup' ] );
+
+		// Enqueue dismiss script on all admin pages when setup notice is showing
+		if ( get_option( 'oe_amb_just_activated' ) ) {
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_setup_dismiss_script' ] );
+		}
+	}
+
+	/**
+	 * Enqueue a small inline script for the setup notice dismiss button.
+	 * Uses wp_add_inline_script() — no raw <script> tags in HTML output.
+	 */
+	public function enqueue_setup_dismiss_script(): void {
+		wp_register_script( 'oe-amb-setup-dismiss', false, [ 'jquery' ], null, true ); // phpcs:ignore
+		wp_enqueue_script( 'oe-amb-setup-dismiss' );
+		wp_add_inline_script(
+			'oe-amb-setup-dismiss',
+			'function oeDismissSetup(){' .
+				'jQuery.post(ajaxurl,{action:"oe_amb_dismiss_setup",nonce:"' . esc_js( wp_create_nonce( 'oe_amb_dismiss' ) ) . '"});' .
+				'var el=document.getElementById("oe-amb-setup-notice");if(el){el.style.display="none";}' .
+			'}'
+		);
 	}
 
 	// ── Menus ─────────────────────────────────────────────────────────────────
@@ -255,7 +276,8 @@ class OE_Amb_Admin {
 			'from_email'             => sanitize_email( $_POST['from_email']        ?? get_option('admin_email') ),
 			'monthly_report_day'     => (int)    ( $_POST['monthly_report_day']     ?? 1 ),
 			'auto_approve_days'      => (int)    ( $_POST['auto_approve_days']      ?? 0 ),
-			'currency'               => sanitize_text_field( $_POST['currency']     ?? 'SEK' ),
+			'currency'               => sanitize_text_field( $_POST['currency']     ?? get_option('woocommerce_currency','USD') ),
+			'terms_page_url'         => esc_url_raw( $_POST['terms_page_url']       ?? '' ),
 		];
 		update_option( 'oe_amb_settings', $settings );
 
@@ -377,12 +399,6 @@ class OE_Amb_Admin {
 				&nbsp;
 				<button class="button" onclick="oeDismissSetup()" type="button"><?php esc_html_e( 'Dismiss this notice', 'oe-ambassador' ); ?></button>
 			</p>
-			<script>
-			function oeDismissSetup() {
-				jQuery.post(ajaxurl, { action: 'oe_amb_dismiss_setup', nonce: '<?php echo esc_js( wp_create_nonce('oe_amb_dismiss') ); ?>' });
-				document.getElementById('oe-amb-setup-notice').style.display = 'none';
-			}
-			</script>
 		</div>
 		<?php
 	}
@@ -398,7 +414,10 @@ class OE_Amb_Admin {
 	private function pending_count(): int {
 		global $wpdb;
 		return (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM " . OE_Amb_DB::amb_table() . " WHERE status = 'pending'"
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM ' . OE_Amb_DB::amb_table() . ' WHERE status = %s',
+				'pending'
+			)
 		);
 	}
 

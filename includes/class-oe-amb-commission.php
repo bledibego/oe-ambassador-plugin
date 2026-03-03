@@ -80,8 +80,8 @@ class OE_Amb_Commission {
 		// ── Tier determination ────────────────────────────────────────────────
 		// Count how many commissions this ambassador has THIS calendar month
 		// (including the one we're about to insert = so +1 to the query result)
-		$month_start  = date( 'Y-m-01 00:00:00' );
-		$month_end    = date( 'Y-m-t 23:59:59' );
+		$month_start  = wp_date( 'Y-m-01 00:00:00' );
+		$month_end    = wp_date( 'Y-m-t 23:59:59' );
 		$monthly_count = OE_Amb_DB::count_monthly_commissions( $ambassador_id, $month_start, $month_end );
 		$monthly_count++; // this order is the next one
 

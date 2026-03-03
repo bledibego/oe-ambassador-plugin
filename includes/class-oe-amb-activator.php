@@ -200,7 +200,8 @@ class OE_Amb_Activator {
 				'monthly_report_day'     => 1,     // day of month to send monthly reports
 				'from_name'              => get_option( 'blogname' ),
 				'from_email'             => get_option( 'admin_email' ),
-				'currency'               => get_option( 'woocommerce_currency', 'SEK' ),
+				'currency'               => get_option( 'woocommerce_currency', 'USD' ),
+				'terms_page_url'         => '',
 			] );
 		}
 	}

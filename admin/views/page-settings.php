@@ -98,6 +98,13 @@ $statuses = [
                             <p class="description"><?php esc_html_e( 'Page with [oe_amb_portal] shortcode.', 'oe-ambassador' ); ?></p>
                         </td>
                     </tr>
+                    <tr>
+                        <th><?php esc_html_e( 'Terms &amp; Conditions URL', 'oe-ambassador' ); ?></th>
+                        <td>
+                            <input type="url" name="terms_page_url" value="<?php echo esc_url( $s['terms_page_url'] ?? '' ); ?>" style="width:360px" placeholder="https://yoursite.com/terms">
+                            <p class="description"><?php esc_html_e( 'URL linked in the ambassador application consent checkbox.', 'oe-ambassador' ); ?></p>
+                        </td>
+                    </tr>
                 </table>
             </div>
 
