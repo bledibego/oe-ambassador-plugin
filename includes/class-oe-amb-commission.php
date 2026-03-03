@@ -136,7 +136,7 @@ class OE_Amb_Commission {
 			wp_send_json_error( 'Permission denied.' );
 		}
 
-		$id = (int) ( $_POST['commission_id'] ?? 0 );
+		$id = absint( wp_unslash( $_POST['commission_id'] ?? 0 ) );
 		if ( ! $id ) {
 			wp_send_json_error( 'Invalid ID.' );
 		}
@@ -156,10 +156,10 @@ class OE_Amb_Commission {
 			wp_send_json_error( 'Permission denied.' );
 		}
 
-		$ambassador_id = (int) ( $_POST['ambassador_id'] ?? 0 );
-		$date_from     = sanitize_text_field( $_POST['date_from'] ?? '' );
-		$date_to       = sanitize_text_field( $_POST['date_to'] ?? '' );
-		$notes         = sanitize_textarea_field( $_POST['notes'] ?? '' );
+		$ambassador_id = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
+		$date_from     = sanitize_text_field( wp_unslash( $_POST['date_from'] ?? '' ) );
+		$date_to       = sanitize_text_field( wp_unslash( $_POST['date_to'] ?? '' ) );
+		$notes         = sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) );
 
 		if ( ! $ambassador_id || ! $date_from || ! $date_to ) {
 			wp_send_json_error( 'Missing parameters.' );

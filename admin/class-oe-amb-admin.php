@@ -148,8 +148,8 @@ class OE_Amb_Admin {
 		}
 
 		// ── Generate discount codes if not set ────────────────────────────────
-		$customer_pct = (float) wp_unslash( $_POST['coupon_pct'] ?? OE_Ambassador::setting( 'customer_coupon_pct', 10 ) );
-		$self_pct     = (float) wp_unslash( $_POST['self_pct']   ?? OE_Ambassador::setting( 'self_purchase_pct', 20 ) );
+		$customer_pct = isset( $_POST['coupon_pct'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['coupon_pct'] ) ) : (float) OE_Ambassador::setting( 'customer_coupon_pct', 10 );
+		$self_pct     = isset( $_POST['self_pct'] )   ? (float) sanitize_text_field( wp_unslash( $_POST['self_pct']   ) ) : (float) OE_Ambassador::setting( 'self_purchase_pct', 20 );
 
 		$coupon_code  = sanitize_text_field( wp_unslash( $_POST['coupon_code'] ?? '' ) );
 		$self_code    = sanitize_text_field( wp_unslash( $_POST['self_code']   ?? '' ) );
@@ -237,8 +237,8 @@ class OE_Amb_Admin {
 		}
 
 		$amb->notes         = sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) );
-		$amb->coupon_pct    = (float) wp_unslash( $_POST['coupon_pct'] ?? $amb->coupon_pct );
-		$amb->self_pct      = (float) wp_unslash( $_POST['self_pct']   ?? $amb->self_pct );
+		$amb->coupon_pct    = isset( $_POST['coupon_pct'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['coupon_pct'] ) ) : $amb->coupon_pct;
+		$amb->self_pct      = isset( $_POST['self_pct'] )   ? (float) sanitize_text_field( wp_unslash( $_POST['self_pct']   ) ) : $amb->self_pct;
 		$amb->free_products = isset( $_POST['free_products'] )
 			? array_map( 'intval', (array) wp_unslash( $_POST['free_products'] ) )
 			: [];

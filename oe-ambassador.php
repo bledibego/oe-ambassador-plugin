@@ -71,7 +71,6 @@ final class OE_Ambassador {
 	}
 
 	private function init_hooks(): void {
-		add_action( 'init',           [ $this, 'load_textdomain' ] );
 		add_action( 'plugins_loaded', [ $this, 'check_woocommerce' ], 20 );
 
 		// Declare WooCommerce HPOS compatibility
@@ -89,14 +88,6 @@ final class OE_Ambassador {
 		}
 
 		OE_Amb_Public::instance()->init();
-	}
-
-	public function load_textdomain(): void {
-		load_plugin_textdomain(
-			'oe-ambassador',
-			false,
-			dirname( OE_AMB_BASENAME ) . '/languages/'
-		);
 	}
 
 	public function check_woocommerce(): void {

@@ -144,8 +144,8 @@ if ( is_user_logged_in() ) {
                 <label>
                     <input type="checkbox" name="consent" required>
                     <?php
-                    /* translators: %s is the terms and conditions link */
                     printf(
+                        /* translators: %s is the terms and conditions link */
                         esc_html__( 'I agree to the %s and the ambassador program terms.', 'oe-ambassador' ),
                         '<a href="' . esc_url( $terms_url ) . '" target="_blank">' . esc_html__( 'Terms & Conditions', 'oe-ambassador' ) . '</a>'
                     ); ?>

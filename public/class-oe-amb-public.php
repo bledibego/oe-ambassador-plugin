@@ -147,14 +147,14 @@ class OE_Amb_Public {
 	public function handle_application(): void {
 		check_ajax_referer( 'oe_amb_apply', 'nonce' );
 
-		$first_name      = sanitize_text_field( $_POST['first_name'] ?? '' );
-		$last_name       = sanitize_text_field( $_POST['last_name']  ?? '' );
-		$email           = sanitize_email( $_POST['email'] ?? '' );
-		$phone           = sanitize_text_field( $_POST['phone'] ?? '' );
-		$social_platform = sanitize_key( $_POST['social_platform'] ?? '' );
-		$social_handle   = sanitize_text_field( $_POST['social_handle'] ?? '' );
-		$website         = esc_url_raw( $_POST['website'] ?? '' );
-		$motivation      = sanitize_textarea_field( $_POST['motivation'] ?? '' );
+		$first_name      = sanitize_text_field( wp_unslash( $_POST['first_name'] ?? '' ) );
+		$last_name       = sanitize_text_field( wp_unslash( $_POST['last_name']  ?? '' ) );
+		$email           = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
+		$phone           = sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) );
+		$social_platform = sanitize_key( wp_unslash( $_POST['social_platform'] ?? '' ) );
+		$social_handle   = sanitize_text_field( wp_unslash( $_POST['social_handle'] ?? '' ) );
+		$website         = esc_url_raw( wp_unslash( $_POST['website'] ?? '' ) );
+		$motivation      = sanitize_textarea_field( wp_unslash( $_POST['motivation'] ?? '' ) );
 
 		// Validation
 		if ( ! $first_name || ! $last_name ) {

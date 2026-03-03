@@ -166,6 +166,7 @@ $com_status_class = [
 
             <p class="oe-amb-share-tip">
                 <?php printf(
+                    /* translators: %s is the ambassador's coupon code */
                     esc_html__( 'On Instagram or TikTok? Mention code %s in your post/story.', 'oe-ambassador' ),
                     '<strong>' . esc_html( strtoupper( $amb->coupon_code ) ) . '</strong>'
                 ); ?>
@@ -204,8 +205,8 @@ $com_status_class = [
             $gap = (int)$next_tier['min'] - $monthly['total_orders'];
         ?>
         <p class="oe-amb-tier-progress"><?php
-        /* translators: 1: number of sales needed, 2: commission percentage for next tier */
         printf(
+            /* translators: 1: number of sales needed, 2: commission percentage for next tier */
             esc_html__( 'You need %1$d more sale(s) this month to reach %2$d%% commission!', 'oe-ambassador' ),
             absint( $gap ),
             (int) $next_tier['pct']

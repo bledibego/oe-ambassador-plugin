@@ -182,8 +182,8 @@ class OE_Amb_Ambassador {
 			$share_url  = add_query_arg( 'ref', $this->coupon_code, $shop_url );
 		}
 		if ( ! $share_text ) {
-			/* translators: 1: discount percentage, 2: site name, 3: coupon code */
 			$share_text = sprintf(
+				/* translators: 1: discount percentage, 2: site name, 3: coupon code */
 				__( 'Get %1$d%% off at %2$s with my code: %3$s', 'oe-ambassador' ),
 				(int) $this->coupon_pct,
 				get_bloginfo( 'name' ),

@@ -15,9 +15,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 global $wpdb;
 
 // Drop tables
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_amb_payouts" );
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_amb_commissions" );
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_ambassadors" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_amb_payouts" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_amb_commissions" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_ambassadors" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 // Delete options
 delete_option( 'oe_amb_settings' );

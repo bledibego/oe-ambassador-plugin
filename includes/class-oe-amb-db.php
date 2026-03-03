@@ -129,12 +129,12 @@ class OE_Amb_DB {
 
 	public static function update_ambassador( int $id, array $data ): bool {
 		global $wpdb;
-		return (bool) $wpdb->update( self::amb_table(), $data, [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		return (bool) $wpdb->update( self::amb_table(), $data, [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	}
 
 	public static function delete_ambassador( int $id ): bool {
 		global $wpdb;
-		return (bool) $wpdb->delete( self::amb_table(), [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		return (bool) $wpdb->delete( self::amb_table(), [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	}
 
 	// ── Commission CRUD ───────────────────────────────────────────────────────
@@ -163,7 +163,7 @@ class OE_Amb_DB {
 
 	public static function update_commission( int $id, array $data ): bool {
 		global $wpdb;
-		return (bool) $wpdb->update( self::com_table(), $data, [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		return (bool) $wpdb->update( self::com_table(), $data, [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	}
 
 	/**
@@ -255,7 +255,7 @@ class OE_Amb_DB {
 
 	public static function update_payout( int $id, array $data ): bool {
 		global $wpdb;
-		return (bool) $wpdb->update( self::pay_table(), $data, [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		return (bool) $wpdb->update( self::pay_table(), $data, [ 'id' => $id ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	}
 
 	/**
@@ -272,7 +272,7 @@ class OE_Amb_DB {
 
 		$rows_sql = "SELECT * FROM `{$table}` WHERE ambassador_id = %d ORDER BY period_start DESC LIMIT %d OFFSET %d"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$items    = (array) $wpdb->get_results( $wpdb->prepare( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
-			$rows_sql,
+			$rows_sql, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$ambassador_id,
 			(int) $args['per_page'],
 			(int) $args['offset']
@@ -306,15 +306,16 @@ class OE_Amb_DB {
 		global $wpdb;
 		$at = self::amb_table();
 		$ct = self::com_table();
-		return (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
-			"SELECT a.id, a.first_name, a.last_name, a.email, a.coupon_code, a.status as amb_status,
-			        COUNT(c.id) as total_orders, SUM(c.commission) as total_commission,
-			        MAX(c.order_date) as last_sale
-			 FROM `{$at}` a
-			 LEFT JOIN `{$ct}` c ON a.id = c.ambassador_id AND c.status != 'cancelled'
-			 WHERE a.status = 'approved'
-			 GROUP BY a.id
-			 ORDER BY total_commission DESC" // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		);
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$summary_sql = "SELECT a.id, a.first_name, a.last_name, a.email, a.coupon_code, a.status as amb_status,
+		        COUNT(c.id) as total_orders, SUM(c.commission) as total_commission,
+		        MAX(c.order_date) as last_sale
+		 FROM `{$at}` a
+		 LEFT JOIN `{$ct}` c ON a.id = c.ambassador_id AND c.status != 'cancelled'
+		 WHERE a.status = 'approved'
+		 GROUP BY a.id
+		 ORDER BY total_commission DESC";
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return (array) $wpdb->get_results( $summary_sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
 }
