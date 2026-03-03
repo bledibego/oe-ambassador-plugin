@@ -6,10 +6,10 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$status_filter = sanitize_key( $_GET['status'] ?? '' );
-$search        = sanitize_text_field( $_GET['s'] ?? '' );
+$status_filter = sanitize_key( wp_unslash( $_GET['status'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$search        = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $per_page      = 20;
-$current_page  = max( 1, (int) ( $_GET['paged'] ?? 1 ) );
+$current_page  = max( 1, absint( wp_unslash( $_GET['paged'] ?? 1 ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $offset        = ( $current_page - 1 ) * $per_page;
 
 $result = OE_Amb_DB::get_ambassadors( [
@@ -93,7 +93,7 @@ $badge_map = [
             <td><?php echo (int) $stats['total_orders']; ?></td>
             <td><?php echo number_format( (float) $stats['total_commission'], 0 ); ?></td>
             <td><span class="oe-amb-badge <?php echo esc_attr( $badge_map[ $row->status ] ?? 'oe-amb-badge-muted' ); ?>"><?php echo esc_html( ucfirst( $row->status ) ); ?></span></td>
-            <td><?php echo esc_html( date( 'd M Y', strtotime( $row->applied_at ) ) ); ?></td>
+            <td><?php echo esc_html( gmdate( 'd M Y', strtotime( $row->applied_at ) ) ); ?></td>
             <td>
                 <a href="<?php echo esc_url( $detail_url ); ?>" class="button button-small"><?php esc_html_e( 'View', 'oe-ambassador' ); ?></a>
             </td>
@@ -107,14 +107,14 @@ $badge_map = [
 <div class="tablenav bottom">
     <div class="tablenav-pages">
         <?php
-        echo paginate_links( [
+        echo wp_kses_post( paginate_links( [
             'base'      => add_query_arg( 'paged', '%#%' ),
             'format'    => '',
             'prev_text' => '&laquo;',
             'next_text' => '&raquo;',
             'total'     => $total_pages,
             'current'   => $current_page,
-        ] );
+        ] ) );
         ?>
     </div>
 </div>

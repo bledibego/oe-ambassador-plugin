@@ -6,12 +6,12 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$month    = sanitize_text_field( $_GET['month'] ?? date( 'Y-m' ) );
+$month    = sanitize_text_field( wp_unslash( $_GET['month'] ?? gmdate( 'Y-m' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 [ $y, $m ] = explode( '-', $month );
 $date_from = "$y-$m-01 00:00:00";
-$date_to   = date( 'Y-m-t 23:59:59', mktime( 0, 0, 0, (int)$m, 1, (int)$y ) );
-$prev_month = date( 'Y-m', mktime( 0, 0, 0, (int)$m - 1, 1, (int)$y ) );
-$next_month = date( 'Y-m', mktime( 0, 0, 0, (int)$m + 1, 1, (int)$y ) );
+$date_to   = gmdate( 'Y-m-t 23:59:59', mktime( 0, 0, 0, (int)$m, 1, (int)$y ) );
+$prev_month = gmdate( 'Y-m', mktime( 0, 0, 0, (int)$m - 1, 1, (int)$y ) );
+$next_month = gmdate( 'Y-m', mktime( 0, 0, 0, (int)$m + 1, 1, (int)$y ) );
 $currency   = OE_Ambassador::setting( 'currency', 'SEK' );
 
 $summary = OE_Amb_DB::get_commission_summary();
@@ -23,28 +23,24 @@ $com_badge = [
 ];
 
 global $wpdb;
+$ct = OE_Amb_DB::com_table();
+$at = OE_Amb_DB::amb_table();
 
 // All commissions for this month
-$month_commissions = (array) $wpdb->get_results( $wpdb->prepare(
-    "SELECT c.*, a.first_name, a.last_name, a.coupon_code
-     FROM " . OE_Amb_DB::com_table() . " c
-     JOIN " . OE_Amb_DB::amb_table() . " a ON c.ambassador_id = a.id
-     WHERE c.order_date BETWEEN %s AND %s AND c.status != 'cancelled'
-     ORDER BY c.order_date DESC",
-    $date_from,
-    $date_to
-) );
+$month_commissions = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+	$wpdb->prepare(
+		"SELECT c.*, a.first_name, a.last_name, a.coupon_code FROM `{$ct}` c JOIN `{$at}` a ON c.ambassador_id = a.id WHERE c.order_date BETWEEN %s AND %s AND c.status != 'cancelled' ORDER BY c.order_date DESC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$date_from,
+		$date_to
+	)
+);
 
 $month_total_sales = count( $month_commissions );
 $month_total_comm  = array_sum( array_column( $month_commissions, 'commission' ) );
 
 // Pending commissions (all time)
-$pending_all = (array) $wpdb->get_results(
-    "SELECT c.*, a.first_name, a.last_name, a.coupon_code
-     FROM " . OE_Amb_DB::com_table() . " c
-     JOIN " . OE_Amb_DB::amb_table() . " a ON c.ambassador_id = a.id
-     WHERE c.status = 'pending'
-     ORDER BY c.order_date DESC"
+$pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+	"SELECT c.*, a.first_name, a.last_name, a.coupon_code FROM `{$ct}` c JOIN `{$at}` a ON c.ambassador_id = a.id WHERE c.status = 'pending' ORDER BY c.order_date DESC" // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 );
 ?>
 <div class="wrap oe-amb-wrap">
@@ -53,9 +49,9 @@ $pending_all = (array) $wpdb->get_results(
 <!-- Month navigator -->
 <div class="oe-amb-card" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:16px">
-        <a href="<?php echo esc_url( add_query_arg( 'month', $prev_month ) ); ?>" class="button">&laquo; <?php echo esc_html( date( 'M Y', strtotime( $prev_month . '-01' ) ) ); ?></a>
-        <h2 style="margin:0;flex:1;text-align:center"><?php echo esc_html( date( 'F Y', strtotime( $month . '-01' ) ) ); ?></h2>
-        <a href="<?php echo esc_url( add_query_arg( 'month', $next_month ) ); ?>" class="button"><?php echo esc_html( date( 'M Y', strtotime( $next_month . '-01' ) ) ); ?> &raquo;</a>
+        <a href="<?php echo esc_url( add_query_arg( 'month', $prev_month ) ); ?>" class="button">&laquo; <?php echo esc_html( gmdate( 'M Y', strtotime( $prev_month . '-01' ) ) ); ?></a>
+        <h2 style="margin:0;flex:1;text-align:center"><?php echo esc_html( gmdate( 'F Y', strtotime( $month . '-01' ) ) ); ?></h2>
+        <a href="<?php echo esc_url( add_query_arg( 'month', $next_month ) ); ?>" class="button"><?php echo esc_html( gmdate( 'M Y', strtotime( $next_month . '-01' ) ) ); ?> &raquo;</a>
     </div>
 </div>
 
@@ -108,7 +104,7 @@ $pending_all = (array) $wpdb->get_results(
                     <small style="color:#888;font-family:monospace"><?php echo esc_html( strtoupper( $com->coupon_code ) ); ?></small>
                 </td>
                 <td><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $com->order_id . '&action=edit' ) ); ?>">#<?php echo (int) $com->order_id; ?></a></td>
-                <td><?php echo esc_html( date( 'd M Y', strtotime( $com->order_date ) ) ); ?></td>
+                <td><?php echo esc_html( gmdate( 'd M Y', strtotime( $com->order_date ) ) ); ?></td>
                 <td style="text-align:right"><?php echo number_format( (float) $com->net_amount, 2 ); ?></td>
                 <td style="text-align:right"><?php echo number_format( (float) $com->tier_pct, 1 ); ?>%</td>
                 <td style="text-align:right;font-weight:700"><?php echo number_format( (float) $com->commission, 2 ); ?> <?php echo esc_html( $currency ); ?></td>
@@ -125,7 +121,9 @@ $pending_all = (array) $wpdb->get_results(
 <!-- Monthly commission table by ambassador -->
 <div class="oe-amb-card">
     <div class="oe-amb-card-header">
-        <h2><?php printf( esc_html__( 'By Ambassador — %s', 'oe-ambassador' ), esc_html( date( 'F Y', strtotime( $month . '-01' ) ) ) ); ?></h2>
+        <h2><?php
+        /* translators: %s is the month and year, e.g. "January 2025" */
+        printf( esc_html__( 'By Ambassador — %s', 'oe-ambassador' ), esc_html( gmdate( 'F Y', strtotime( $month . '-01' ) ) ) ); ?></h2>
     </div>
     <table class="widefat striped" style="font-size:13px">
         <thead>

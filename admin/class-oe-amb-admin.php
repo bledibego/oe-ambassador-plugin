@@ -117,8 +117,8 @@ class OE_Amb_Admin {
 	}
 
 	public function page_ambassadors(): void {
-		$action = sanitize_key( $_GET['action'] ?? '' );
-		if ( $action === 'view' && isset( $_GET['id'] ) ) {
+		$action = sanitize_key( $_GET['action'] ?? '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $action === 'view' && isset( $_GET['id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			require OE_AMB_DIR . 'admin/views/page-ambassador-detail.php';
 		} else {
 			require OE_AMB_DIR . 'admin/views/page-ambassadors.php';
@@ -141,18 +141,18 @@ class OE_Amb_Admin {
 			wp_die( esc_html__( 'Permission denied.', 'oe-ambassador' ) );
 		}
 
-		$id  = (int) ( $_POST['ambassador_id'] ?? 0 );
+		$id  = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
 		$amb = OE_Amb_Ambassador::find( $id );
 		if ( ! $amb ) {
 			wp_die( esc_html__( 'Ambassador not found.', 'oe-ambassador' ) );
 		}
 
 		// ── Generate discount codes if not set ────────────────────────────────
-		$customer_pct = (float) ( $_POST['coupon_pct'] ?? OE_Ambassador::setting( 'customer_coupon_pct', 10 ) );
-		$self_pct     = (float) ( $_POST['self_pct']   ?? OE_Ambassador::setting( 'self_purchase_pct', 20 ) );
+		$customer_pct = (float) wp_unslash( $_POST['coupon_pct'] ?? OE_Ambassador::setting( 'customer_coupon_pct', 10 ) );
+		$self_pct     = (float) wp_unslash( $_POST['self_pct']   ?? OE_Ambassador::setting( 'self_purchase_pct', 20 ) );
 
-		$coupon_code  = sanitize_text_field( $_POST['coupon_code'] ?? '' );
-		$self_code    = sanitize_text_field( $_POST['self_code']   ?? '' );
+		$coupon_code  = sanitize_text_field( wp_unslash( $_POST['coupon_code'] ?? '' ) );
+		$self_code    = sanitize_text_field( wp_unslash( $_POST['self_code']   ?? '' ) );
 
 		if ( ! $coupon_code ) {
 			$coupon_code = OE_Amb_Coupon::suggest_code( $amb->first_name, $amb->last_name, $customer_pct );
@@ -173,7 +173,7 @@ class OE_Amb_Admin {
 
 		// Free products
 		$free_products = isset( $_POST['free_products'] )
-			? array_map( 'intval', (array) $_POST['free_products'] )
+			? array_map( 'intval', (array) wp_unslash( $_POST['free_products'] ) )
 			: [];
 
 		// Create WP user if doesn't exist
@@ -207,14 +207,14 @@ class OE_Amb_Admin {
 			wp_die( esc_html__( 'Permission denied.', 'oe-ambassador' ) );
 		}
 
-		$id  = (int) ( $_POST['ambassador_id'] ?? 0 );
+		$id  = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
 		$amb = OE_Amb_Ambassador::find( $id );
 		if ( ! $amb ) {
 			wp_die( esc_html__( 'Ambassador not found.', 'oe-ambassador' ) );
 		}
 
 		$amb->status = 'rejected';
-		$amb->notes  = sanitize_textarea_field( $_POST['rejection_reason'] ?? '' );
+		$amb->notes  = sanitize_textarea_field( wp_unslash( $_POST['rejection_reason'] ?? '' ) );
 		$amb->save();
 
 		OE_Amb_Email::send_rejection( $amb );
@@ -230,19 +230,19 @@ class OE_Amb_Admin {
 			wp_die( esc_html__( 'Permission denied.', 'oe-ambassador' ) );
 		}
 
-		$id  = (int) ( $_POST['ambassador_id'] ?? 0 );
+		$id  = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
 		$amb = OE_Amb_Ambassador::find( $id );
 		if ( ! $amb ) {
 			wp_die( esc_html__( 'Ambassador not found.', 'oe-ambassador' ) );
 		}
 
-		$amb->notes          = sanitize_textarea_field( $_POST['notes'] ?? '' );
-		$amb->coupon_pct     = (float) ( $_POST['coupon_pct'] ?? $amb->coupon_pct );
-		$amb->self_pct       = (float) ( $_POST['self_pct']   ?? $amb->self_pct );
-		$amb->free_products  = isset( $_POST['free_products'] )
-			? array_map( 'intval', (array) $_POST['free_products'] )
+		$amb->notes         = sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) );
+		$amb->coupon_pct    = (float) wp_unslash( $_POST['coupon_pct'] ?? $amb->coupon_pct );
+		$amb->self_pct      = (float) wp_unslash( $_POST['self_pct']   ?? $amb->self_pct );
+		$amb->free_products = isset( $_POST['free_products'] )
+			? array_map( 'intval', (array) wp_unslash( $_POST['free_products'] ) )
 			: [];
-		$amb->status         = sanitize_key( $_POST['status'] ?? $amb->status );
+		$amb->status        = sanitize_key( wp_unslash( $_POST['status'] ?? $amb->status ) );
 		$amb->save();
 
 		// Update coupon amounts if they changed
@@ -266,25 +266,25 @@ class OE_Amb_Admin {
 
 		// General settings
 		$settings = [
-			'customer_coupon_pct'    => (int)    ( $_POST['customer_coupon_pct']    ?? 10 ),
-			'self_purchase_pct'      => (int)    ( $_POST['self_purchase_pct']      ?? 20 ),
-			'commission_trigger'     => sanitize_key( $_POST['commission_trigger']  ?? 'completed' ),
-			'apply_page_id'          => (int)    ( $_POST['apply_page_id']          ?? 0 ),
-			'portal_page_id'         => (int)    ( $_POST['portal_page_id']         ?? 0 ),
-			'notify_admin_email'     => sanitize_email( $_POST['notify_admin_email'] ?? get_option('admin_email') ),
-			'from_name'              => sanitize_text_field( $_POST['from_name']    ?? get_bloginfo('name') ),
-			'from_email'             => sanitize_email( $_POST['from_email']        ?? get_option('admin_email') ),
-			'monthly_report_day'     => (int)    ( $_POST['monthly_report_day']     ?? 1 ),
-			'auto_approve_days'      => (int)    ( $_POST['auto_approve_days']      ?? 0 ),
-			'currency'               => sanitize_text_field( $_POST['currency']     ?? get_option('woocommerce_currency','USD') ),
-			'terms_page_url'         => esc_url_raw( $_POST['terms_page_url']       ?? '' ),
+			'customer_coupon_pct'    => absint( wp_unslash( $_POST['customer_coupon_pct']    ?? 10 ) ),
+			'self_purchase_pct'      => absint( wp_unslash( $_POST['self_purchase_pct']      ?? 20 ) ),
+			'commission_trigger'     => sanitize_key( wp_unslash( $_POST['commission_trigger']  ?? 'completed' ) ),
+			'apply_page_id'          => absint( wp_unslash( $_POST['apply_page_id']          ?? 0 ) ),
+			'portal_page_id'         => absint( wp_unslash( $_POST['portal_page_id']         ?? 0 ) ),
+			'notify_admin_email'     => sanitize_email( wp_unslash( $_POST['notify_admin_email'] ?? get_option( 'admin_email' ) ) ),
+			'from_name'              => sanitize_text_field( wp_unslash( $_POST['from_name']    ?? get_bloginfo( 'name' ) ) ),
+			'from_email'             => sanitize_email( wp_unslash( $_POST['from_email']        ?? get_option( 'admin_email' ) ) ),
+			'monthly_report_day'     => absint( wp_unslash( $_POST['monthly_report_day']     ?? 1 ) ),
+			'auto_approve_days'      => absint( wp_unslash( $_POST['auto_approve_days']      ?? 0 ) ),
+			'currency'               => sanitize_text_field( wp_unslash( $_POST['currency']     ?? get_option( 'woocommerce_currency', 'USD' ) ) ),
+			'terms_page_url'         => esc_url_raw( wp_unslash( $_POST['terms_page_url']       ?? '' ) ),
 		];
 		update_option( 'oe_amb_settings', $settings );
 
 		// Tiers
-		$tier_mins = array_map( 'intval', (array) ( $_POST['tier_min'] ?? [] ) );
-		$tier_maxs = array_map( 'intval', (array) ( $_POST['tier_max'] ?? [] ) );
-		$tier_pcts = array_map( 'floatval', (array) ( $_POST['tier_pct'] ?? [] ) );
+		$tier_mins = array_map( 'intval', (array) wp_unslash( $_POST['tier_min'] ?? [] ) );
+		$tier_maxs = array_map( 'intval', (array) wp_unslash( $_POST['tier_max'] ?? [] ) );
+		$tier_pcts = array_map( 'floatval', (array) wp_unslash( $_POST['tier_pct'] ?? [] ) );
 		$tiers = [];
 		foreach ( $tier_mins as $i => $min ) {
 			$tiers[] = [
@@ -309,8 +309,8 @@ class OE_Amb_Admin {
 		if ( ! current_user_can( 'manage_oe_ambassadors' ) ) {
 			wp_send_json_error();
 		}
-		$id     = (int) ( $_POST['id'] ?? 0 );
-		$status = sanitize_key( $_POST['status'] ?? '' );
+		$id     = absint( wp_unslash( $_POST['id'] ?? 0 ) );
+		$status = sanitize_key( wp_unslash( $_POST['status'] ?? '' ) );
 		if ( ! $id || ! in_array( $status, [ 'approved', 'suspended', 'rejected' ], true ) ) {
 			wp_send_json_error();
 		}
@@ -390,7 +390,9 @@ class OE_Amb_Admin {
 				</li>
 				<li>⬜ <strong><?php esc_html_e( 'Link to your Apply page from your navigation menu', 'oe-ambassador' ); ?></strong>
 					<?php if ( $apply_url ) : ?>
-						— <?php printf( esc_html__( 'URL: %s', 'oe-ambassador' ), '<code>' . esc_html( $apply_url ) . '</code>' ); ?>
+						— <?php
+						/* translators: %s is the page URL */
+						printf( esc_html__( 'URL: %s', 'oe-ambassador' ), '<code>' . esc_html( $apply_url ) . '</code>' ); ?>
 					<?php endif; ?>
 				</li>
 			</ol>
@@ -413,9 +415,10 @@ class OE_Amb_Admin {
 
 	private function pending_count(): int {
 		global $wpdb;
-		return (int) $wpdb->get_var(
+		$table = OE_Amb_DB::amb_table();
+		return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$wpdb->prepare(
-				'SELECT COUNT(*) FROM ' . OE_Amb_DB::amb_table() . ' WHERE status = %s',
+				"SELECT COUNT(*) FROM `{$table}` WHERE status = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				'pending'
 			)
 		);
@@ -436,7 +439,7 @@ class OE_Amb_Admin {
 			] );
 		}
 
-		$username  = sanitize_user( $amb->first_name . '.' . $amb->last_name . rand( 10, 99 ) );
+		$username  = sanitize_user( $amb->first_name . '.' . $amb->last_name . wp_rand( 10, 99 ) );
 		$password  = wp_generate_password( 12 );
 
 		$user_id = wp_create_user( $username, $password, $amb->email );

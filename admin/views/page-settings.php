@@ -157,7 +157,7 @@ $statuses = [
             <tbody id="oe-tiers-body">
             <?php foreach ( $tiers as $i => $tier ) : ?>
                 <tr>
-                    <td><?php echo $i + 1; ?></td>
+                    <td><?php echo absint( $i + 1 ); ?></td>
                     <td><input type="number" name="tier_min[]" value="<?php echo (int) $tier['min']; ?>" min="0" style="width:80px"></td>
                     <td><input type="number" name="tier_max[]" value="<?php echo (int) $tier['max']; ?>" min="-1" style="width:80px"></td>
                     <td><input type="number" name="tier_pct[]" value="<?php echo (float) $tier['pct']; ?>" min="0.1" max="100" step="0.1" style="width:80px"> %</td>

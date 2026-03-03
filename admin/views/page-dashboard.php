@@ -10,18 +10,19 @@ $stats_pending  = OE_Amb_DB::get_ambassadors( [ 'status' => 'pending',  'per_pag
 $stats_approved = OE_Amb_DB::get_ambassadors( [ 'status' => 'approved', 'per_page' => 9999 ] )['total'];
 $commission_sum = OE_Amb_DB::get_commission_summary();
 
-$month_start = date( 'Y-m-01 00:00:00' );
-$month_end   = date( 'Y-m-t 23:59:59' );
+$month_start = gmdate( 'Y-m-01 00:00:00' );
+$month_end   = gmdate( 'Y-m-t 23:59:59' );
 
 global $wpdb;
-$this_month_sales = (int) $wpdb->get_var(
-	"SELECT COUNT(*) FROM " . OE_Amb_DB::com_table() . " WHERE order_date BETWEEN '$month_start' AND '$month_end' AND status != 'cancelled'"
+$ct = OE_Amb_DB::com_table();
+$this_month_sales = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+	$wpdb->prepare( "SELECT COUNT(*) FROM `{$ct}` WHERE order_date BETWEEN %s AND %s AND status != 'cancelled'", $month_start, $month_end ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 );
-$this_month_comm = (float) $wpdb->get_var(
-	"SELECT SUM(commission) FROM " . OE_Amb_DB::com_table() . " WHERE order_date BETWEEN '$month_start' AND '$month_end' AND status != 'cancelled'"
+$this_month_comm = (float) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+	$wpdb->prepare( "SELECT SUM(commission) FROM `{$ct}` WHERE order_date BETWEEN %s AND %s AND status != 'cancelled'", $month_start, $month_end ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 );
-$pending_comm    = (int) $wpdb->get_var(
-	"SELECT COUNT(*) FROM " . OE_Amb_DB::com_table() . " WHERE status = 'pending'"
+$pending_comm = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+	$wpdb->prepare( "SELECT COUNT(*) FROM `{$ct}` WHERE status = %s", 'pending' ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 );
 
 $currency = OE_Ambassador::setting( 'currency', 'SEK' );
@@ -94,7 +95,7 @@ $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
                     <td><?php echo esc_html( $row->email ); ?></td>
                     <td><?php echo esc_html( ucfirst( $row->social_platform ) ); ?></td>
                     <td><span class="oe-amb-badge <?php echo esc_attr( $status_class ); ?>"><?php echo esc_html( ucfirst( $row->status ) ); ?></span></td>
-                    <td><?php echo esc_html( date( 'd M Y', strtotime( $row->applied_at ) ) ); ?></td>
+                    <td><?php echo esc_html( gmdate( 'd M Y', strtotime( $row->applied_at ) ) ); ?></td>
                 </tr>
             <?php endforeach; ?>
             <?php if ( empty( $recent['items'] ) ) : ?>
@@ -139,7 +140,10 @@ $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
 
         <?php if ( $pending_comm > 0 ) : ?>
         <div class="notice notice-warning inline" style="margin:16px;border-radius:6px">
-            <p><?php printf( esc_html__( '%d commission(s) awaiting approval.', 'oe-ambassador' ), $pending_comm ); ?>
+            <p><?php
+            /* translators: %d is the number of commissions awaiting approval */
+            printf( esc_html__( '%d commission(s) awaiting approval.', 'oe-ambassador' ), absint( $pending_comm ) );
+            ?>
             <a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-reports' ) ); ?>"><?php esc_html_e( 'Review', 'oe-ambassador' ); ?></a></p>
         </div>
         <?php endif; ?>

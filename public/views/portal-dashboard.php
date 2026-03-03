@@ -8,13 +8,13 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $currency     = OE_Ambassador::setting( 'currency', 'SEK' );
-$month        = sanitize_text_field( $_GET['amb_month'] ?? date( 'Y-m' ) );
+$month        = sanitize_text_field( wp_unslash( $_GET['amb_month'] ?? gmdate( 'Y-m' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 [ $y, $m ]    = explode( '-', $month );
 $date_from    = "$y-$m-01 00:00:00";
-$date_to      = date( 'Y-m-t 23:59:59', mktime( 0, 0, 0, (int)$m, 1, (int)$y ) );
-$prev_month   = date( 'Y-m', mktime( 0, 0, 0, (int)$m - 1, 1, (int)$y ) );
-$next_month   = date( 'Y-m', mktime( 0, 0, 0, (int)$m + 1, 1, (int)$y ) );
-$month_label  = date( 'F Y', mktime( 0, 0, 0, (int)$m, 1, (int)$y ) );
+$date_to      = gmdate( 'Y-m-t 23:59:59', mktime( 0, 0, 0, (int)$m, 1, (int)$y ) );
+$prev_month   = gmdate( 'Y-m', mktime( 0, 0, 0, (int)$m - 1, 1, (int)$y ) );
+$next_month   = gmdate( 'Y-m', mktime( 0, 0, 0, (int)$m + 1, 1, (int)$y ) );
+$month_label  = gmdate( 'F Y', mktime( 0, 0, 0, (int)$m, 1, (int)$y ) );
 
 $monthly  = $amb->monthly_stats( $month );
 $lifetime = $amb->lifetime_stats();
@@ -46,8 +46,12 @@ $com_status_class = [
     <!-- Header -->
     <div class="oe-amb-portal-header">
         <div>
-            <h1><?php printf( esc_html__( 'Welcome back, %s!', 'oe-ambassador' ), esc_html( $amb->first_name ) ); ?></h1>
-            <p><?php printf( esc_html__( 'Your %s Ambassador Dashboard', 'oe-ambassador' ), esc_html( $site_name ) ); ?></p>
+            <h1><?php
+            /* translators: %s is the ambassador's first name */
+            printf( esc_html__( 'Welcome back, %s!', 'oe-ambassador' ), esc_html( $amb->first_name ) ); ?></h1>
+            <p><?php
+            /* translators: %s is the site name */
+            printf( esc_html__( 'Your %s Ambassador Dashboard', 'oe-ambassador' ), esc_html( $site_name ) ); ?></p>
         </div>
         <div class="oe-amb-portal-tier-badge">
             <?php
@@ -68,10 +72,10 @@ $com_status_class = [
 
     <!-- Month navigator -->
     <div class="oe-amb-month-nav">
-        <a href="<?php echo esc_url( add_query_arg( 'amb_month', $prev_month ) ); ?>" class="oe-amb-month-btn">&laquo; <?php echo esc_html( date( 'M Y', strtotime( $prev_month . '-01' ) ) ); ?></a>
+        <a href="<?php echo esc_url( add_query_arg( 'amb_month', $prev_month ) ); ?>" class="oe-amb-month-btn">&laquo; <?php echo esc_html( gmdate( 'M Y', strtotime( $prev_month . '-01' ) ) ); ?></a>
         <strong><?php echo esc_html( $month_label ); ?></strong>
-        <?php if ( $next_month <= date('Y-m') ) : ?>
-        <a href="<?php echo esc_url( add_query_arg( 'amb_month', $next_month ) ); ?>" class="oe-amb-month-btn"><?php echo esc_html( date( 'M Y', strtotime( $next_month . '-01' ) ) ); ?> &raquo;</a>
+        <?php if ( $next_month <= gmdate( 'Y-m' ) ) : ?>
+        <a href="<?php echo esc_url( add_query_arg( 'amb_month', $next_month ) ); ?>" class="oe-amb-month-btn"><?php echo esc_html( gmdate( 'M Y', strtotime( $next_month . '-01' ) ) ); ?> &raquo;</a>
         <?php else : ?>
         <span class="oe-amb-month-btn disabled"></span>
         <?php endif; ?>
@@ -105,7 +109,9 @@ $com_status_class = [
             <h3><?php esc_html_e( 'Your Discount Codes', 'oe-ambassador' ); ?></h3>
 
             <div class="oe-amb-code-block">
-                <div class="oe-amb-code-label"><?php printf( esc_html__( 'Customer Code (%d%% off)', 'oe-ambassador' ), (int) $amb->coupon_pct ); ?></div>
+                <div class="oe-amb-code-label"><?php
+                /* translators: %d is the customer discount percentage */
+                printf( esc_html__( 'Customer Code (%d%% off)', 'oe-ambassador' ), (int) $amb->coupon_pct ); ?></div>
                 <div class="oe-amb-code-display">
                     <span class="oe-amb-code" id="oe-customer-code"><?php echo esc_html( strtoupper( $amb->coupon_code ) ); ?></span>
                     <button class="oe-amb-copy-btn" data-target="oe-customer-code"><?php esc_html_e( 'Copy', 'oe-ambassador' ); ?></button>
@@ -114,7 +120,9 @@ $com_status_class = [
 
             <?php if ( $amb->self_code ) : ?>
             <div class="oe-amb-code-block" style="margin-top:12px">
-                <div class="oe-amb-code-label"><?php printf( esc_html__( 'Your Personal Code (%d%% off your orders)', 'oe-ambassador' ), (int) $amb->self_pct ); ?></div>
+                <div class="oe-amb-code-label"><?php
+                /* translators: %d is the ambassador's self-purchase discount percentage */
+                printf( esc_html__( 'Your Personal Code (%d%% off your orders)', 'oe-ambassador' ), (int) $amb->self_pct ); ?></div>
                 <div class="oe-amb-code-display">
                     <span class="oe-amb-code oe-amb-code-self" id="oe-self-code"><?php echo esc_html( strtoupper( $amb->self_code ) ); ?></span>
                     <button class="oe-amb-copy-btn" data-target="oe-self-code"><?php esc_html_e( 'Copy', 'oe-ambassador' ); ?></button>
@@ -177,7 +185,7 @@ $com_status_class = [
         ?>
             <div class="oe-amb-tier-card <?php echo $is_active ? 'active' : ''; ?>">
                 <?php if ( $is_active ) : ?><div class="oe-amb-tier-active-badge">✓ <?php esc_html_e( 'Current', 'oe-ambassador' ); ?></div><?php endif; ?>
-                <div class="oe-amb-tier-num">Tier <?php echo $i + 1; ?></div>
+                <div class="oe-amb-tier-num">Tier <?php echo absint( $i + 1 ); ?></div>
                 <div class="oe-amb-tier-pct"><?php echo (int) $tier['pct']; ?>%</div>
                 <div class="oe-amb-tier-range"><?php echo esc_html( $min . $max_label . ' sales' ); ?></div>
             </div>
@@ -195,9 +203,11 @@ $com_status_class = [
         if ( $next_tier ) :
             $gap = (int)$next_tier['min'] - $monthly['total_orders'];
         ?>
-        <p class="oe-amb-tier-progress"><?php printf(
-            esc_html__( 'You need %d more sale(s) this month to reach %d%% commission!', 'oe-ambassador' ),
-            $gap,
+        <p class="oe-amb-tier-progress"><?php
+        /* translators: 1: number of sales needed, 2: commission percentage for next tier */
+        printf(
+            esc_html__( 'You need %1$d more sale(s) this month to reach %2$d%% commission!', 'oe-ambassador' ),
+            absint( $gap ),
             (int) $next_tier['pct']
         ); ?></p>
         <?php endif; ?>
@@ -205,7 +215,9 @@ $com_status_class = [
 
     <!-- Order history -->
     <div class="oe-amb-portal-card">
-        <h3><?php printf( esc_html__( 'Orders — %s', 'oe-ambassador' ), esc_html( $month_label ) ); ?></h3>
+        <h3><?php
+        /* translators: %s is the month and year label */
+        printf( esc_html__( 'Orders — %s', 'oe-ambassador' ), esc_html( $month_label ) ); ?></h3>
 
         <?php if ( empty( $commissions['items'] ) ) : ?>
         <p class="oe-amb-empty"><?php esc_html_e( 'No sales this month. Share your code to start earning!', 'oe-ambassador' ); ?></p>
@@ -227,7 +239,7 @@ $com_status_class = [
                 <?php foreach ( $commissions['items'] as $com ) : ?>
                     <tr>
                         <td>#<?php echo (int) $com->order_id; ?></td>
-                        <td><?php echo esc_html( date( 'd M', strtotime( $com->order_date ) ) ); ?></td>
+                        <td><?php echo esc_html( gmdate( 'd M', strtotime( $com->order_date ) ) ); ?></td>
                         <td class="num"><?php echo number_format( (float) $com->order_total, 0 ); ?></td>
                         <td class="num"><?php echo number_format( (float) $com->net_amount, 0 ); ?></td>
                         <td class="num"><?php echo number_format( (float) $com->tier_pct, 1 ); ?>%</td>
@@ -271,12 +283,12 @@ $com_status_class = [
                 <tbody>
                 <?php foreach ( $payouts['items'] as $pay ) : ?>
                     <tr>
-                        <td><?php echo esc_html( date( 'd M', strtotime( $pay->period_start ) ) . ' – ' . date( 'd M Y', strtotime( $pay->period_end ) ) ); ?></td>
+                        <td><?php echo esc_html( gmdate( 'd M', strtotime( $pay->period_start ) ) . ' – ' . gmdate( 'd M Y', strtotime( $pay->period_end ) ) ); ?></td>
                         <td class="num"><?php echo (int) $pay->total_sales; ?></td>
                         <td class="num"><?php echo number_format( (float) $pay->tier_pct, 1 ); ?>%</td>
                         <td class="num commission"><?php echo number_format( (float) $pay->payout_amount, 2 ); ?> <?php echo esc_html( $pay->currency ); ?></td>
                         <td><span class="oe-amb-com-status status-<?php echo esc_attr( $pay->status ); ?>"><?php echo esc_html( ucfirst( $pay->status ) ); ?></span></td>
-                        <td><?php echo $pay->paid_at ? esc_html( date( 'd M Y', strtotime( $pay->paid_at ) ) ) : '—'; ?></td>
+                        <td><?php echo $pay->paid_at ? esc_html( gmdate( 'd M Y', strtotime( $pay->paid_at ) ) ) : '—'; ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

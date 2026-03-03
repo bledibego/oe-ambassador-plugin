@@ -145,7 +145,7 @@ class OE_Amb_Ambassador {
 		}
 		[ $y, $m ] = explode( '-', $month );
 		$start = "$y-$m-01 00:00:00";
-		$end   = date( 'Y-m-t 23:59:59', mktime( 0, 0, 0, (int) $m, 1, (int) $y ) );
+		$end   = gmdate( 'Y-m-t 23:59:59', mktime( 0, 0, 0, (int) $m, 1, (int) $y ) );
 
 		$result = OE_Amb_DB::get_commissions( $this->id, [
 			'date_from' => $start,
@@ -182,8 +182,9 @@ class OE_Amb_Ambassador {
 			$share_url  = add_query_arg( 'ref', $this->coupon_code, $shop_url );
 		}
 		if ( ! $share_text ) {
+			/* translators: 1: discount percentage, 2: site name, 3: coupon code */
 			$share_text = sprintf(
-				__( 'Get %d%% off at %s with my code: %s', 'oe-ambassador' ),
+				__( 'Get %1$d%% off at %2$s with my code: %3$s', 'oe-ambassador' ),
 				(int) $this->coupon_pct,
 				get_bloginfo( 'name' ),
 				strtoupper( $this->coupon_code )

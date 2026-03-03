@@ -6,7 +6,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$id  = (int) ( $_GET['id'] ?? 0 );
+$id  = absint( wp_unslash( $_GET['id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $amb = OE_Amb_Ambassador::find( $id );
 
 if ( ! $amb ) {
@@ -57,8 +57,8 @@ $all_products = wc_get_products( [ 'limit' => -1, 'status' => 'publish', 'return
                 <tr><th><?php esc_html_e( 'Phone', 'oe-ambassador' ); ?></th><td><?php echo esc_html( $amb->phone ) ?: '—'; ?></td></tr>
                 <tr><th><?php esc_html_e( 'Platform', 'oe-ambassador' ); ?></th><td><?php echo $amb->social_platform ? esc_html( ucfirst( $amb->social_platform ) . ( $amb->social_handle ? ' · @' . $amb->social_handle : '' ) ) : '—'; ?></td></tr>
                 <?php if ( $amb->website ) : ?><tr><th><?php esc_html_e( 'Website', 'oe-ambassador' ); ?></th><td><a href="<?php echo esc_url( $amb->website ); ?>" target="_blank"><?php echo esc_html( $amb->website ); ?></a></td></tr><?php endif; ?>
-                <tr><th><?php esc_html_e( 'Applied', 'oe-ambassador' ); ?></th><td><?php echo esc_html( date( 'd M Y H:i', strtotime( $amb->applied_at ) ) ); ?></td></tr>
-                <?php if ( $amb->approved_at ) : ?><tr><th><?php esc_html_e( 'Approved', 'oe-ambassador' ); ?></th><td><?php echo esc_html( date( 'd M Y', strtotime( $amb->approved_at ) ) ); ?></td></tr><?php endif; ?>
+                <tr><th><?php esc_html_e( 'Applied', 'oe-ambassador' ); ?></th><td><?php echo esc_html( gmdate( 'd M Y H:i', strtotime( $amb->applied_at ) ) ); ?></td></tr>
+                <?php if ( $amb->approved_at ) : ?><tr><th><?php esc_html_e( 'Approved', 'oe-ambassador' ); ?></th><td><?php echo esc_html( gmdate( 'd M Y', strtotime( $amb->approved_at ) ) ); ?></td></tr><?php endif; ?>
                 <tr><th style="vertical-align:top"><?php esc_html_e( 'Motivation', 'oe-ambassador' ); ?></th><td><?php echo nl2br( esc_html( $amb->motivation ) ); ?></td></tr>
                 <?php if ( $amb->user_id ) : ?>
                 <tr><th><?php esc_html_e( 'WP User', 'oe-ambassador' ); ?></th>
@@ -209,8 +209,8 @@ $all_products = wc_get_products( [ 'limit' => -1, 'status' => 'publish', 'return
             <div class="oe-amb-card-header"><h2><?php esc_html_e( 'Create Payout', 'oe-ambassador' ); ?></h2></div>
             <p style="color:#666"><?php esc_html_e( 'Mark all approved commissions in a period as paid and notify the ambassador.', 'oe-ambassador' ); ?></p>
             <div style="display:flex;gap:12px;align-items:flex-end">
-                <label><?php esc_html_e( 'From', 'oe-ambassador' ); ?><br><input type="date" id="oe-payout-from" value="<?php echo esc_attr( date( 'Y-m-01' ) ); ?>"></label>
-                <label><?php esc_html_e( 'To', 'oe-ambassador' ); ?><br><input type="date" id="oe-payout-to" value="<?php echo esc_attr( date( 'Y-m-t' ) ); ?>"></label>
+                <label><?php esc_html_e( 'From', 'oe-ambassador' ); ?><br><input type="date" id="oe-payout-from" value="<?php echo esc_attr( gmdate( 'Y-m-01' ) ); ?>"></label>
+                <label><?php esc_html_e( 'To', 'oe-ambassador' ); ?><br><input type="date" id="oe-payout-to" value="<?php echo esc_attr( gmdate( 'Y-m-t' ) ); ?>"></label>
                 <label style="flex:1"><?php esc_html_e( 'Notes', 'oe-ambassador' ); ?><br><input type="text" id="oe-payout-notes" style="width:100%" placeholder="<?php esc_attr_e( 'Transfer reference, PayPal ID...', 'oe-ambassador' ); ?>"></label>
                 <button class="button button-primary" id="oe-payout-btn" data-amb="<?php echo (int) $amb->id; ?>"><?php esc_html_e( 'Create Payout', 'oe-ambassador' ); ?></button>
             </div>
@@ -222,7 +222,9 @@ $all_products = wc_get_products( [ 'limit' => -1, 'status' => 'publish', 'return
         <div class="oe-amb-card" style="margin-top:16px">
             <div class="oe-amb-card-header">
                 <h2><?php esc_html_e( 'Recent Commissions', 'oe-ambassador' ); ?></h2>
-                <span style="color:#888"><?php printf( esc_html__( 'Lifetime: %d sales · %s %s commission', 'oe-ambassador' ), $lifetime['total_orders'], number_format( $lifetime['total_commission'], 0 ), $currency ); ?></span>
+                <span style="color:#888"><?php
+                /* translators: 1: number of lifetime sales, 2: commission amount, 3: currency code */
+                printf( esc_html__( 'Lifetime: %1$d sales · %2$s %3$s commission', 'oe-ambassador' ), absint( $lifetime['total_orders'] ), esc_html( number_format( $lifetime['total_commission'], 0 ) ), esc_html( $currency ) ); ?></span>
             </div>
             <table class="widefat striped" style="font-size:13px">
                 <thead>
@@ -245,7 +247,7 @@ $all_products = wc_get_products( [ 'limit' => -1, 'status' => 'publish', 'return
                 ?>
                     <tr>
                         <td><a href="<?php echo esc_url( admin_url( 'post.php?post=' . $com->order_id . '&action=edit' ) ); ?>">#<?php echo (int) $com->order_id; ?></a></td>
-                        <td><?php echo esc_html( date( 'd M Y', strtotime( $com->order_date ) ) ); ?></td>
+                        <td><?php echo esc_html( gmdate( 'd M Y', strtotime( $com->order_date ) ) ); ?></td>
                         <td style="text-align:right"><?php echo number_format( (float) $com->order_total, 0 ); ?></td>
                         <td style="text-align:right"><?php echo number_format( (float) $com->net_amount, 0 ); ?></td>
                         <td style="text-align:right"><?php echo number_format( (float) $com->tier_pct, 1 ); ?>%</td>

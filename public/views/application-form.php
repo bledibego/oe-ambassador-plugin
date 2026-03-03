@@ -32,7 +32,9 @@ if ( is_user_logged_in() ) {
     <!-- Hero -->
     <div class="oe-amb-apply-hero">
         <div class="oe-amb-apply-hero-badge">AMBASSADOR PROGRAM</div>
-        <h1 class="oe-amb-apply-title"><?php printf( esc_html__( 'Join the %s Family', 'oe-ambassador' ), esc_html( $site_name ) ); ?></h1>
+        <h1 class="oe-amb-apply-title"><?php
+        /* translators: %s is the site name */
+        printf( esc_html__( 'Join the %s Family', 'oe-ambassador' ), esc_html( $site_name ) ); ?></h1>
         <p class="oe-amb-apply-sub"><?php esc_html_e( 'Share what you love. Earn commissions. Get exclusive perks.', 'oe-ambassador' ); ?></p>
     </div>
 
@@ -40,7 +42,9 @@ if ( is_user_logged_in() ) {
     <div class="oe-amb-benefits">
         <div class="oe-amb-benefit">
             <div class="oe-amb-benefit-icon">🎁</div>
-            <strong><?php printf( esc_html__( '%d%% off for your followers', 'oe-ambassador' ), $customer_pct ); ?></strong>
+            <strong><?php
+            /* translators: %d is the customer discount percentage */
+            printf( esc_html__( '%d%% off for your followers', 'oe-ambassador' ), (int) $customer_pct ); ?></strong>
             <p><?php esc_html_e( 'Your unique code gives your audience an exclusive discount.', 'oe-ambassador' ); ?></p>
         </div>
         <div class="oe-amb-benefit">
@@ -68,7 +72,7 @@ if ( is_user_logged_in() ) {
             $max_label = ( (int) $tier['max'] === -1 ) ? '+' : '–' . $tier['max'];
         ?>
             <div class="oe-amb-tier-card">
-                <div class="oe-amb-tier-num">Tier <?php echo $i + 1; ?></div>
+                <div class="oe-amb-tier-num">Tier <?php echo absint( $i + 1 ); ?></div>
                 <div class="oe-amb-tier-pct"><?php echo (int) $tier['pct']; ?>%</div>
                 <div class="oe-amb-tier-range"><?php echo esc_html( $tier['min'] . $max_label . ' sales/mo' ); ?></div>
             </div>
@@ -139,7 +143,9 @@ if ( is_user_logged_in() ) {
             <div class="oe-amb-form-group oe-amb-consent">
                 <label>
                     <input type="checkbox" name="consent" required>
-                    <?php printf(
+                    <?php
+                    /* translators: %s is the terms and conditions link */
+                    printf(
                         esc_html__( 'I agree to the %s and the ambassador program terms.', 'oe-ambassador' ),
                         '<a href="' . esc_url( $terms_url ) . '" target="_blank">' . esc_html__( 'Terms & Conditions', 'oe-ambassador' ) . '</a>'
                     ); ?>

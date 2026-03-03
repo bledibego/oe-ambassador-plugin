@@ -33,7 +33,7 @@ class OE_Amb_Email {
 		$site_name = get_bloginfo( 'name' );
 		$site_url  = home_url( '/' );
 		$logo_url  = get_site_icon_url( 64 );
-		$year      = date( 'Y' );
+		$year      = gmdate( 'Y' );
 
 		ob_start();
 		?>
@@ -79,6 +79,7 @@ class OE_Amb_Email {
 	 */
 	public static function send_new_application_admin( OE_Amb_Ambassador $amb ): void {
 		$admin_email  = OE_Ambassador::setting( 'notify_admin_email', get_option( 'admin_email' ) );
+		/* translators: %s is the ambassador's full name */
 		$subject      = sprintf( __( 'New Ambassador Application: %s', 'oe-ambassador' ), $amb->full_name() );
 		$review_url   = admin_url( 'admin.php?page=oe-ambassador-ambassadors&action=view&id=' . $amb->id );
 
@@ -200,7 +201,8 @@ echo '</ul>';
 	 * @param array             $commissions Result from OE_Amb_DB::get_commissions()
 	 */
 	public static function send_monthly_report( OE_Amb_Ambassador $amb, string $month, array $commissions ): void {
-		$month_label = date( 'F Y', strtotime( $month . '-01' ) );
+		$month_label = gmdate( 'F Y', strtotime( $month . '-01' ) );
+		/* translators: %s is the month and year, e.g. "January 2025" */
 		$subject     = sprintf( __( 'Your Ambassador Report — %s', 'oe-ambassador' ), $month_label );
 		$portal_url  = get_permalink( (int) OE_Ambassador::setting( 'portal_page_id', 0 ) ) ?: home_url( '/ambassador' );
 		$currency    = OE_Ambassador::setting( 'currency', 'SEK' );
@@ -244,9 +246,9 @@ echo '</ul>';
   foreach ( $commissions['items'] as $com ) :
     $bg = ( $i++ % 2 ) ? '#f8f8f8' : '#fff';
   ?>
-    <tr style="background:<?php echo $bg; ?>">
+    <tr style="background:<?php echo esc_attr( $bg ); ?>">
       <td style="padding:9px 10px">#<?php echo (int) $com->order_id; ?></td>
-      <td style="padding:9px 10px"><?php echo esc_html( date( 'd M', strtotime( $com->order_date ) ) ); ?></td>
+      <td style="padding:9px 10px"><?php echo esc_html( gmdate( 'd M', strtotime( $com->order_date ) ) ); ?></td>
       <td style="padding:9px 10px;text-align:right"><?php echo number_format( (float) $com->net_amount, 2 ); ?></td>
       <td style="padding:9px 10px;text-align:right"><?php echo number_format( (float) $com->tier_pct, 1 ); ?>%</td>
       <td style="padding:9px 10px;text-align:right;font-weight:600"><?php echo number_format( (float) $com->commission, 2 ); ?></td>
@@ -281,7 +283,8 @@ echo '</ul>';
 	 */
 	public static function send_admin_monthly_summary( array $summary, string $month ): void {
 		$admin_email = OE_Ambassador::setting( 'notify_admin_email', get_option( 'admin_email' ) );
-		$month_label = date( 'F Y', strtotime( $month . '-01' ) );
+		$month_label = gmdate( 'F Y', strtotime( $month . '-01' ) );
+		/* translators: %s is the month and year, e.g. "January 2025" */
 		$subject     = sprintf( __( 'Ambassador Program Summary — %s', 'oe-ambassador' ), $month_label );
 		$admin_url   = admin_url( 'admin.php?page=oe-ambassador-reports' );
 
@@ -299,11 +302,11 @@ echo '</ul>';
   </thead>
   <tbody>
   <?php $i = 0; foreach ( $summary as $row ) : $bg = ( $i++ % 2 ) ? '#f8f8f8' : '#fff'; ?>
-    <tr style="background:<?php echo $bg; ?>">
+    <tr style="background:<?php echo esc_attr( $bg ); ?>">
       <td style="padding:9px 10px"><?php echo esc_html( $row->first_name . ' ' . $row->last_name ); ?></td>
       <td style="padding:9px 10px;text-align:right"><?php echo (int) $row->total_orders; ?></td>
       <td style="padding:9px 10px;text-align:right;font-weight:600"><?php echo number_format( (float) $row->total_commission, 2 ); ?></td>
-      <td style="padding:9px 10px"><?php echo $row->last_sale ? esc_html( date( 'd M Y', strtotime( $row->last_sale ) ) ) : '—'; ?></td>
+      <td style="padding:9px 10px"><?php echo $row->last_sale ? esc_html( gmdate( 'd M Y', strtotime( $row->last_sale ) ) ) : '—'; ?></td>
     </tr>
   <?php endforeach; ?>
   </tbody>
@@ -326,7 +329,7 @@ echo '</ul>';
 		ob_start();
 		?>
 <h2 style="color:#1a1a2e;margin:0 0 8px">Payment Processed! 💸</h2>
-<p>Hi <?php echo esc_html( $amb->first_name ); ?>, your commission for the period <strong><?php echo esc_html( date( 'd M', strtotime( $payout->period_start ) ) ); ?> – <?php echo esc_html( date( 'd M Y', strtotime( $payout->period_end ) ) ); ?></strong> has been processed.</p>
+<p>Hi <?php echo esc_html( $amb->first_name ); ?>, your commission for the period <strong><?php echo esc_html( gmdate( 'd M', strtotime( $payout->period_start ) ) ); ?> – <?php echo esc_html( gmdate( 'd M Y', strtotime( $payout->period_end ) ) ); ?></strong> has been processed.</p>
 <div style="background:#e8f5e9;border-radius:10px;padding:24px;text-align:center;margin:24px 0">
   <div style="font-size:42px;font-weight:700;color:#2e7d32"><?php echo number_format( (float) $payout->payout_amount, 2 ); ?> <small style="font-size:18px"><?php echo esc_html( $currency ); ?></small></div>
   <div style="color:#555;margin-top:6px">Based on <?php echo (int) $payout->total_sales; ?> sales · <?php echo number_format( (float) $payout->tier_pct, 1 ); ?>% tier</div>
