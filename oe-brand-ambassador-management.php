@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       OE Ambassador – Brand Ambassador Management
+ * Plugin Name:       OE Brand Ambassador Management
  * Plugin URI:        https://github.com/bledibego/oe-ambassador-plugin
  * Description:       Complete brand ambassador management for WooCommerce. Configurable tiers, commission tracking, discount codes, self-purchase codes, free products, social sharing, and email reports.
  * Version:           1.0.0
@@ -8,7 +8,7 @@
  * Author URI:        https://optimumessence.se
  * License:           GPL-2.0+
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       oe-ambassador
+ * Text Domain:       oe-brand-ambassador-management
  * Domain Path:       /languages
  * Requires at least: 6.0
  * Requires PHP:      8.0
@@ -23,23 +23,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
-define( 'OE_AMB_VERSION',  '1.0.0' );
-define( 'OE_AMB_FILE',     __FILE__ );
-define( 'OE_AMB_DIR',      plugin_dir_path( __FILE__ ) );
-define( 'OE_AMB_URL',      plugin_dir_url( __FILE__ ) );
-define( 'OE_AMB_BASENAME', plugin_basename( __FILE__ ) );
+define( 'OE_AMB_VERSION',    '1.0.0' );
+define( 'OE_AMB_FILE',       __FILE__ );
+define( 'OE_AMB_DIR',        plugin_dir_path( __FILE__ ) );
+define( 'OE_AMB_URL',        plugin_dir_url( __FILE__ ) );
+define( 'OE_AMB_BASENAME',   plugin_basename( __FILE__ ) );
+define( 'OE_AMB_FREE_LIMIT', 3 ); // Max ambassadors on the free plan
+
+// ── Load Freemius SDK (if available) ─────────────────────────────────────────
+require_once OE_AMB_DIR . 'includes/freemius-init.php';
 
 // ── Load all includes immediately (needed before plugins_loaded for activation hooks) ──
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-oe-amb-activator.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-oe-amb-db.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-oe-amb-ambassador.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-oe-amb-coupon.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-oe-amb-commission.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-oe-amb-email.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-oe-amb-cron.php';
-require_once plugin_dir_path( __FILE__ ) . 'public/class-oe-amb-public.php';
+require_once OE_AMB_DIR . 'includes/class-oe-amb-activator.php';
+require_once OE_AMB_DIR . 'includes/class-oe-amb-db.php';
+require_once OE_AMB_DIR . 'includes/class-oe-amb-ambassador.php';
+require_once OE_AMB_DIR . 'includes/class-oe-amb-coupon.php';
+require_once OE_AMB_DIR . 'includes/class-oe-amb-commission.php';
+require_once OE_AMB_DIR . 'includes/class-oe-amb-email.php';
+require_once OE_AMB_DIR . 'includes/class-oe-amb-cron.php';
+require_once OE_AMB_DIR . 'public/class-oe-amb-public.php';
 if ( is_admin() ) {
-	require_once plugin_dir_path( __FILE__ ) . 'admin/class-oe-amb-admin.php';
+	require_once OE_AMB_DIR . 'admin/class-oe-amb-admin.php';
 }
 
 // ── Activation / Deactivation ────────────────────────────────────────────────
@@ -93,8 +97,8 @@ final class OE_Ambassador {
 	public function check_woocommerce(): void {
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			add_action( 'admin_notices', function() {
-				echo '<div class="notice notice-error"><p><strong>OE Ambassador</strong>: ' .
-				     esc_html__( 'WooCommerce must be installed and active.', 'oe-ambassador' ) .
+				echo '<div class="notice notice-error"><p><strong>OE Brand Ambassador Management</strong>: ' .
+				     esc_html__( 'WooCommerce must be installed and active.', 'oe-brand-ambassador-management' ) .
 				     '</p></div>';
 			} );
 		}
@@ -106,7 +110,7 @@ final class OE_Ambassador {
 			[ 'min' => 0,   'max' => 49,  'pct' => 7  ],
 			[ 'min' => 50,  'max' => 99,  'pct' => 10 ],
 			[ 'min' => 100, 'max' => 149, 'pct' => 15 ],
-			[ 'min' => 150, 'max' => -1,  'pct' => 20 ], // -1 = unlimited
+			[ 'min' => 150, 'max' => -1,  'pct' => 20 ],
 		];
 	}
 
@@ -139,6 +143,30 @@ final class OE_Ambassador {
 		$settings = get_option( 'oe_amb_settings', [] );
 		return $settings[ $key ] ?? $default;
 	}
+}
+
+// ── Pro plan helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Returns true when the site has an active Pro licence.
+ * Falls back to false when the Freemius SDK is not yet installed.
+ */
+function oe_amb_is_pro(): bool {
+	if ( function_exists( 'oe_amb_fs' ) && oe_amb_fs() ) {
+		return oe_amb_fs()->can_use_premium_code();
+	}
+	return false;
+}
+
+/**
+ * Returns the upgrade URL for Pro nudges.
+ * Falls back to the Freemius homepage until the SDK is configured.
+ */
+function oe_amb_upgrade_url(): string {
+	if ( function_exists( 'oe_amb_fs' ) && oe_amb_fs() ) {
+		return oe_amb_fs()->get_upgrade_url();
+	}
+	return 'https://freemius.com'; // replace after Freemius setup
 }
 
 // ── Boot ─────────────────────────────────────────────────────────────────────

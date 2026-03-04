@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Reports page view.
  *
@@ -44,7 +44,7 @@ $pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDa
 );
 ?>
 <div class="wrap oe-amb-wrap">
-<h1><?php esc_html_e( 'Commission Reports', 'oe-ambassador' ); ?></h1>
+<h1><?php esc_html_e( 'Commission Reports', 'oe-brand-ambassador-management' ); ?></h1>
 
 <!-- Month navigator -->
 <div class="oe-amb-card" style="margin-bottom:16px">
@@ -61,21 +61,21 @@ $pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDa
         <div class="oe-amb-stat-icon" style="background:#e3f2fd;color:#1565c0">🛍</div>
         <div>
             <div class="oe-amb-stat-value"><?php echo (int) $month_total_sales; ?></div>
-            <div class="oe-amb-stat-label"><?php esc_html_e( 'Ambassador Sales', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-stat-label"><?php esc_html_e( 'Ambassador Sales', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
     <div class="oe-amb-stat-card">
         <div class="oe-amb-stat-icon" style="background:#f3e5f5;color:#6a1b9a">💰</div>
         <div>
             <div class="oe-amb-stat-value"><?php echo number_format( $month_total_comm, 0 ); ?> <small><?php echo esc_html( $currency ); ?></small></div>
-            <div class="oe-amb-stat-label"><?php esc_html_e( 'Total Commission', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-stat-label"><?php esc_html_e( 'Total Commission', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
     <div class="oe-amb-stat-card">
         <div class="oe-amb-stat-icon" style="background:#fff3e0;color:#e65100">⏳</div>
         <div>
             <div class="oe-amb-stat-value"><?php echo count( $pending_all ); ?></div>
-            <div class="oe-amb-stat-label"><?php esc_html_e( 'Pending Approval (All)', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-stat-label"><?php esc_html_e( 'Pending Approval (All)', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
 </div>
@@ -83,16 +83,16 @@ $pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDa
 <!-- Pending commissions (all time) — need action -->
 <?php if ( ! empty( $pending_all ) ) : ?>
 <div class="oe-amb-card" style="margin-bottom:16px;border:2px solid #c9a96e">
-    <div class="oe-amb-card-header"><h2>⚡ <?php esc_html_e( 'Pending Commissions — Needs Approval', 'oe-ambassador' ); ?></h2></div>
+    <div class="oe-amb-card-header"><h2>⚡ <?php esc_html_e( 'Pending Commissions — Needs Approval', 'oe-brand-ambassador-management' ); ?></h2></div>
     <table class="widefat striped" style="font-size:13px">
         <thead>
             <tr>
-                <th><?php esc_html_e( 'Ambassador', 'oe-ambassador' ); ?></th>
-                <th><?php esc_html_e( 'Order', 'oe-ambassador' ); ?></th>
-                <th><?php esc_html_e( 'Date', 'oe-ambassador' ); ?></th>
-                <th style="text-align:right"><?php esc_html_e( 'NET', 'oe-ambassador' ); ?></th>
-                <th style="text-align:right"><?php esc_html_e( 'Tier', 'oe-ambassador' ); ?></th>
-                <th style="text-align:right"><?php esc_html_e( 'Commission', 'oe-ambassador' ); ?></th>
+                <th><?php esc_html_e( 'Ambassador', 'oe-brand-ambassador-management' ); ?></th>
+                <th><?php esc_html_e( 'Order', 'oe-brand-ambassador-management' ); ?></th>
+                <th><?php esc_html_e( 'Date', 'oe-brand-ambassador-management' ); ?></th>
+                <th style="text-align:right"><?php esc_html_e( 'NET', 'oe-brand-ambassador-management' ); ?></th>
+                <th style="text-align:right"><?php esc_html_e( 'Tier', 'oe-brand-ambassador-management' ); ?></th>
+                <th style="text-align:right"><?php esc_html_e( 'Commission', 'oe-brand-ambassador-management' ); ?></th>
                 <th></th>
             </tr>
         </thead>
@@ -109,7 +109,7 @@ $pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDa
                 <td style="text-align:right"><?php echo number_format( (float) $com->tier_pct, 1 ); ?>%</td>
                 <td style="text-align:right;font-weight:700"><?php echo number_format( (float) $com->commission, 2 ); ?> <?php echo esc_html( $currency ); ?></td>
                 <td>
-                    <button class="button button-primary button-small oe-approve-commission" data-id="<?php echo (int) $com->id; ?>"><?php esc_html_e( 'Approve', 'oe-ambassador' ); ?></button>
+                    <button class="button button-primary button-small oe-approve-commission" data-id="<?php echo (int) $com->id; ?>"><?php esc_html_e( 'Approve', 'oe-brand-ambassador-management' ); ?></button>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -123,17 +123,17 @@ $pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDa
     <div class="oe-amb-card-header">
         <h2><?php
         /* translators: %s is the month and year, e.g. "January 2025" */
-        printf( esc_html__( 'By Ambassador — %s', 'oe-ambassador' ), esc_html( gmdate( 'F Y', strtotime( $month . '-01' ) ) ) ); ?></h2>
+        printf( esc_html__( 'By Ambassador — %s', 'oe-brand-ambassador-management' ), esc_html( gmdate( 'F Y', strtotime( $month . '-01' ) ) ) ); ?></h2>
     </div>
     <table class="widefat striped" style="font-size:13px">
         <thead>
             <tr>
-                <th><?php esc_html_e( 'Ambassador', 'oe-ambassador' ); ?></th>
-                <th><?php esc_html_e( 'Code', 'oe-ambassador' ); ?></th>
-                <th style="text-align:right"><?php esc_html_e( 'Orders', 'oe-ambassador' ); ?></th>
-                <th style="text-align:right"><?php esc_html_e( 'Tier', 'oe-ambassador' ); ?></th>
-                <th style="text-align:right"><?php esc_html_e( 'NET Revenue', 'oe-ambassador' ); ?></th>
-                <th style="text-align:right"><?php esc_html_e( 'Commission', 'oe-ambassador' ); ?></th>
+                <th><?php esc_html_e( 'Ambassador', 'oe-brand-ambassador-management' ); ?></th>
+                <th><?php esc_html_e( 'Code', 'oe-brand-ambassador-management' ); ?></th>
+                <th style="text-align:right"><?php esc_html_e( 'Orders', 'oe-brand-ambassador-management' ); ?></th>
+                <th style="text-align:right"><?php esc_html_e( 'Tier', 'oe-brand-ambassador-management' ); ?></th>
+                <th style="text-align:right"><?php esc_html_e( 'NET Revenue', 'oe-brand-ambassador-management' ); ?></th>
+                <th style="text-align:right"><?php esc_html_e( 'Commission', 'oe-brand-ambassador-management' ); ?></th>
                 <th></th>
             </tr>
         </thead>
@@ -159,7 +159,7 @@ $pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDa
         }
         if ( empty( $by_amb ) ) :
         ?>
-            <tr><td colspan="7" style="text-align:center;padding:24px;color:#888"><?php esc_html_e( 'No sales this month.', 'oe-ambassador' ); ?></td></tr>
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:#888"><?php esc_html_e( 'No sales this month.', 'oe-brand-ambassador-management' ); ?></td></tr>
         <?php else : foreach ( $by_amb as $aid => $data ) : ?>
             <tr>
                 <td><a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-ambassadors&action=view&id=' . $aid ) ); ?>"><?php echo esc_html( $data['name'] ); ?></a></td>
@@ -169,7 +169,7 @@ $pending_all = (array) $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDa
                 <td style="text-align:right"><?php echo number_format( (float) $data['net'], 2 ); ?></td>
                 <td style="text-align:right;font-weight:700"><?php echo number_format( (float) $data['commission'], 2 ); ?> <?php echo esc_html( $currency ); ?></td>
                 <td>
-                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-ambassadors&action=view&id=' . $aid ) ); ?>" class="button button-small"><?php esc_html_e( 'Payout', 'oe-ambassador' ); ?></a>
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-ambassadors&action=view&id=' . $aid ) ); ?>" class="button button-small"><?php esc_html_e( 'Payout', 'oe-brand-ambassador-management' ); ?></a>
                 </td>
             </tr>
         <?php endforeach; endif; ?>

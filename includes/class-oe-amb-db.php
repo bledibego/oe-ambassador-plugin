@@ -318,4 +318,16 @@ class OE_Amb_DB {
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return (array) $wpdb->get_results( $summary_sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
+
+	/**
+	 * Count all non-rejected ambassadors (approved + pending + suspended).
+	 * Used to enforce the free-plan ambassador limit.
+	 */
+	public static function count_active_ambassadors(): int {
+		global $wpdb;
+		$table = self::amb_table();
+		return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+			"SELECT COUNT(*) FROM `{$table}` WHERE status IN ('approved','pending','suspended')" // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		);
+	}
 }

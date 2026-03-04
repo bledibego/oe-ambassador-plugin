@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Frontend shortcodes and public hooks for OE Ambassador.
  *
@@ -54,8 +54,8 @@ class OE_Amb_Public {
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 			'nonce'   => wp_create_nonce( 'oe_amb_apply' ),
 			'i18n'    => [
-				'submitting' => __( 'Sending...', 'oe-ambassador' ),
-				'copy_ok'    => __( 'Copied!', 'oe-ambassador' ),
+				'submitting' => __( 'Sending...', 'oe-brand-ambassador-management' ),
+				'copy_ok'    => __( 'Copied!', 'oe-brand-ambassador-management' ),
 			],
 		] );
 	}
@@ -86,17 +86,17 @@ class OE_Amb_Public {
 		<div class="oe-amb-status-card oe-amb-status-<?php echo esc_attr( $status ); ?>">
 		<?php if ( $status === 'approved' ) : ?>
 			<div class="oe-amb-status-icon">✓</div>
-			<h3><?php esc_html_e( 'You are an approved Ambassador!', 'oe-ambassador' ); ?></h3>
-			<p><?php esc_html_e( 'Head to your portal to see your stats and discount codes.', 'oe-ambassador' ); ?></p>
-			<a href="<?php echo esc_url( $portal_url ); ?>" class="oe-amb-btn"><?php esc_html_e( 'Go to My Portal →', 'oe-ambassador' ); ?></a>
+			<h3><?php esc_html_e( 'You are an approved Ambassador!', 'oe-brand-ambassador-management' ); ?></h3>
+			<p><?php esc_html_e( 'Head to your portal to see your stats and discount codes.', 'oe-brand-ambassador-management' ); ?></p>
+			<a href="<?php echo esc_url( $portal_url ); ?>" class="oe-amb-btn"><?php esc_html_e( 'Go to My Portal →', 'oe-brand-ambassador-management' ); ?></a>
 		<?php elseif ( $status === 'pending' ) : ?>
 			<div class="oe-amb-status-icon">⏳</div>
-			<h3><?php esc_html_e( 'Application Under Review', 'oe-ambassador' ); ?></h3>
-			<p><?php esc_html_e( 'Your application has been received. We usually review applications within 2–3 business days.', 'oe-ambassador' ); ?></p>
+			<h3><?php esc_html_e( 'Application Under Review', 'oe-brand-ambassador-management' ); ?></h3>
+			<p><?php esc_html_e( 'Your application has been received. We usually review applications within 2–3 business days.', 'oe-brand-ambassador-management' ); ?></p>
 		<?php elseif ( $status === 'rejected' ) : ?>
 			<div class="oe-amb-status-icon">✗</div>
-			<h3><?php esc_html_e( 'Application Not Approved', 'oe-ambassador' ); ?></h3>
-			<p><?php esc_html_e( 'Unfortunately we were unable to approve your application at this time.', 'oe-ambassador' ); ?></p>
+			<h3><?php esc_html_e( 'Application Not Approved', 'oe-brand-ambassador-management' ); ?></h3>
+			<p><?php esc_html_e( 'Unfortunately we were unable to approve your application at this time.', 'oe-brand-ambassador-management' ); ?></p>
 		<?php endif; ?>
 		</div>
 		<?php
@@ -117,9 +117,9 @@ class OE_Amb_Public {
 			$apply_url = $apply_id ? get_permalink( $apply_id ) : home_url( '/' );
 			return '<div class="oe-amb-status-card oe-amb-status-pending">
 				<div class="oe-amb-status-icon">👋</div>
-				<h3>' . esc_html__( 'Not an Ambassador Yet?', 'oe-ambassador' ) . '</h3>
-				<p>' . esc_html__( 'Apply to become a brand ambassador and start earning commissions.', 'oe-ambassador' ) . '</p>
-				<a href="' . esc_url( $apply_url ) . '" class="oe-amb-btn">' . esc_html__( 'Apply Now →', 'oe-ambassador' ) . '</a>
+				<h3>' . esc_html__( 'Not an Ambassador Yet?', 'oe-brand-ambassador-management' ) . '</h3>
+				<p>' . esc_html__( 'Apply to become a brand ambassador and start earning commissions.', 'oe-brand-ambassador-management' ) . '</p>
+				<a href="' . esc_url( $apply_url ) . '" class="oe-amb-btn">' . esc_html__( 'Apply Now →', 'oe-brand-ambassador-management' ) . '</a>
 			</div>';
 		}
 
@@ -136,9 +136,9 @@ class OE_Amb_Public {
 		$login_url = wp_login_url( get_permalink() );
 		return '<div class="oe-amb-status-card oe-amb-status-pending">
 			<div class="oe-amb-status-icon">🔐</div>
-			<h3>' . esc_html__( 'Login Required', 'oe-ambassador' ) . '</h3>
-			<p>' . esc_html__( 'Please log in to access your ambassador portal.', 'oe-ambassador' ) . '</p>
-			<a href="' . esc_url( $login_url ) . '" class="oe-amb-btn">' . esc_html__( 'Log In →', 'oe-ambassador' ) . '</a>
+			<h3>' . esc_html__( 'Login Required', 'oe-brand-ambassador-management' ) . '</h3>
+			<p>' . esc_html__( 'Please log in to access your ambassador portal.', 'oe-brand-ambassador-management' ) . '</p>
+			<a href="' . esc_url( $login_url ) . '" class="oe-amb-btn">' . esc_html__( 'Log In →', 'oe-brand-ambassador-management' ) . '</a>
 		</div>';
 	}
 
@@ -158,19 +158,19 @@ class OE_Amb_Public {
 
 		// Validation
 		if ( ! $first_name || ! $last_name ) {
-			wp_send_json_error( __( 'Please enter your full name.', 'oe-ambassador' ) );
+			wp_send_json_error( __( 'Please enter your full name.', 'oe-brand-ambassador-management' ) );
 		}
 		if ( ! is_email( $email ) ) {
-			wp_send_json_error( __( 'Please enter a valid email address.', 'oe-ambassador' ) );
+			wp_send_json_error( __( 'Please enter a valid email address.', 'oe-brand-ambassador-management' ) );
 		}
 		if ( ! $motivation || strlen( $motivation ) < 30 ) {
-			wp_send_json_error( __( 'Please tell us more about yourself (at least 30 characters).', 'oe-ambassador' ) );
+			wp_send_json_error( __( 'Please tell us more about yourself (at least 30 characters).', 'oe-brand-ambassador-management' ) );
 		}
 
 		// Check existing
 		$existing = OE_Amb_DB::get_ambassador_by_email( $email );
 		if ( $existing ) {
-			wp_send_json_error( __( 'An application with this email already exists.', 'oe-ambassador' ) );
+			wp_send_json_error( __( 'An application with this email already exists.', 'oe-brand-ambassador-management' ) );
 		}
 
 		// Linked WP user
@@ -196,12 +196,12 @@ class OE_Amb_Public {
 		$amb->user_id         = $user_id;
 
 		if ( ! $amb->save() ) {
-			wp_send_json_error( __( 'Failed to submit application. Please try again.', 'oe-ambassador' ) );
+			wp_send_json_error( __( 'Failed to submit application. Please try again.', 'oe-brand-ambassador-management' ) );
 		}
 
 		// Notify admin
 		OE_Amb_Email::send_new_application_admin( $amb );
 
-		wp_send_json_success( __( 'Application submitted successfully! We\'ll review it within 2–3 business days and notify you by email.', 'oe-ambassador' ) );
+		wp_send_json_success( __( 'Application submitted successfully! We\'ll review it within 2–3 business days and notify you by email.', 'oe-brand-ambassador-management' ) );
 	}
 }

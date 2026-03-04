@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Plugin activator — creates DB tables and sets defaults.
  *
@@ -124,12 +124,12 @@ class OE_Amb_Activator {
 		$definitions = [
 			'apply_page_id' => [
 				'slug'    => 'ambassador-apply',
-				'title'   => __( 'Become an Ambassador', 'oe-ambassador' ),
+				'title'   => __( 'Become an Ambassador', 'oe-brand-ambassador-management' ),
 				'content' => '<!-- wp:shortcode -->[oe_amb_apply]<!-- /wp:shortcode -->',
 			],
 			'portal_page_id' => [
 				'slug'    => 'ambassador-portal',
-				'title'   => __( 'Ambassador Portal', 'oe-ambassador' ),
+				'title'   => __( 'Ambassador Portal', 'oe-brand-ambassador-management' ),
 				'content' => '<!-- wp:shortcode -->[oe_amb_portal]<!-- /wp:shortcode -->',
 			],
 		];

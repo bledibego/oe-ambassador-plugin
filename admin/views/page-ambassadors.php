@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Ambassadors list view.
  *
@@ -22,11 +22,11 @@ $result = OE_Amb_DB::get_ambassadors( [
 $total_pages = (int) ceil( $result['total'] / $per_page );
 
 $statuses = [
-    ''          => __( 'All', 'oe-ambassador' ),
-    'pending'   => __( 'Pending', 'oe-ambassador' ),
-    'approved'  => __( 'Approved', 'oe-ambassador' ),
-    'rejected'  => __( 'Rejected', 'oe-ambassador' ),
-    'suspended' => __( 'Suspended', 'oe-ambassador' ),
+    ''          => __( 'All', 'oe-brand-ambassador-management' ),
+    'pending'   => __( 'Pending', 'oe-brand-ambassador-management' ),
+    'approved'  => __( 'Approved', 'oe-brand-ambassador-management' ),
+    'rejected'  => __( 'Rejected', 'oe-brand-ambassador-management' ),
+    'suspended' => __( 'Suspended', 'oe-brand-ambassador-management' ),
 ];
 
 $badge_map = [
@@ -37,8 +37,33 @@ $badge_map = [
 ];
 ?>
 <div class="wrap oe-amb-wrap">
-<h1 class="wp-heading-inline"><?php esc_html_e( 'Ambassadors', 'oe-ambassador' ); ?></h1>
+<h1 class="wp-heading-inline"><?php esc_html_e( 'Ambassadors', 'oe-brand-ambassador-management' ); ?></h1>
 <hr class="wp-header-end">
+
+<?php if ( ! oe_amb_is_pro() ) :
+    $active_count = OE_Amb_DB::count_active_ambassadors();
+    $pct          = min( 100, (int) round( $active_count / OE_AMB_FREE_LIMIT * 100 ) );
+    $bar_color    = $active_count >= OE_AMB_FREE_LIMIT ? '#c62828' : '#c9a96e';
+?>
+<div style="margin-bottom:16px;padding:12px 16px;background:#fff8e1;border-left:4px solid <?php echo esc_attr( $bar_color ); ?>;border-radius:4px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div style="flex:1;min-width:200px">
+        <strong><?php
+        printf(
+            /* translators: 1: current ambassador count, 2: free plan limit */
+            esc_html__( '%1$d / %2$d ambassadors used on the free plan', 'oe-brand-ambassador-management' ),
+            absint( $active_count ),
+            absint( OE_AMB_FREE_LIMIT )
+        );
+        ?></strong>
+        <div style="margin-top:6px;height:6px;background:#e0e0e0;border-radius:3px">
+            <div style="width:<?php echo absint( $pct ); ?>%;height:6px;background:<?php echo esc_attr( $bar_color ); ?>;border-radius:3px"></div>
+        </div>
+    </div>
+    <a href="<?php echo esc_url( oe_amb_upgrade_url() ); ?>" target="_blank" class="button button-primary" style="background:#c9a96e;border-color:#b8935a">
+        <?php esc_html_e( 'Upgrade to Pro — Unlimited Ambassadors →', 'oe-brand-ambassador-management' ); ?>
+    </a>
+</div>
+<?php endif; ?>
 
 <!-- Filter tabs -->
 <ul class="subsubsub" style="margin-bottom:12px">
@@ -58,28 +83,28 @@ $badge_map = [
     <input type="hidden" name="page" value="oe-ambassador-ambassadors">
     <?php if ( $status_filter ) : ?><input type="hidden" name="status" value="<?php echo esc_attr( $status_filter ); ?>"><?php endif; ?>
     <p class="search-box">
-        <input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search name, email, code...', 'oe-ambassador' ); ?>" style="width:280px">
-        <?php submit_button( __( 'Search', 'oe-ambassador' ), 'secondary', '', false ); ?>
+        <input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search name, email, code...', 'oe-brand-ambassador-management' ); ?>" style="width:280px">
+        <?php submit_button( __( 'Search', 'oe-brand-ambassador-management' ), 'secondary', '', false ); ?>
     </p>
 </form>
 
 <table class="wp-list-table widefat fixed striped">
     <thead>
         <tr>
-            <th style="width:200px"><?php esc_html_e( 'Name', 'oe-ambassador' ); ?></th>
-            <th><?php esc_html_e( 'Email', 'oe-ambassador' ); ?></th>
-            <th><?php esc_html_e( 'Platform', 'oe-ambassador' ); ?></th>
-            <th><?php esc_html_e( 'Code', 'oe-ambassador' ); ?></th>
-            <th><?php esc_html_e( 'Sales', 'oe-ambassador' ); ?></th>
-            <th><?php esc_html_e( 'Commission', 'oe-ambassador' ); ?></th>
-            <th><?php esc_html_e( 'Status', 'oe-ambassador' ); ?></th>
-            <th><?php esc_html_e( 'Applied', 'oe-ambassador' ); ?></th>
-            <th style="width:100px"><?php esc_html_e( 'Actions', 'oe-ambassador' ); ?></th>
+            <th style="width:200px"><?php esc_html_e( 'Name', 'oe-brand-ambassador-management' ); ?></th>
+            <th><?php esc_html_e( 'Email', 'oe-brand-ambassador-management' ); ?></th>
+            <th><?php esc_html_e( 'Platform', 'oe-brand-ambassador-management' ); ?></th>
+            <th><?php esc_html_e( 'Code', 'oe-brand-ambassador-management' ); ?></th>
+            <th><?php esc_html_e( 'Sales', 'oe-brand-ambassador-management' ); ?></th>
+            <th><?php esc_html_e( 'Commission', 'oe-brand-ambassador-management' ); ?></th>
+            <th><?php esc_html_e( 'Status', 'oe-brand-ambassador-management' ); ?></th>
+            <th><?php esc_html_e( 'Applied', 'oe-brand-ambassador-management' ); ?></th>
+            <th style="width:100px"><?php esc_html_e( 'Actions', 'oe-brand-ambassador-management' ); ?></th>
         </tr>
     </thead>
     <tbody>
     <?php if ( empty( $result['items'] ) ) : ?>
-        <tr><td colspan="9" style="text-align:center;padding:32px;color:#888"><?php esc_html_e( 'No ambassadors found.', 'oe-ambassador' ); ?></td></tr>
+        <tr><td colspan="9" style="text-align:center;padding:32px;color:#888"><?php esc_html_e( 'No ambassadors found.', 'oe-brand-ambassador-management' ); ?></td></tr>
     <?php else : foreach ( $result['items'] as $row ) :
         $amb_obj = OE_Amb_Ambassador::find( (int) $row->id );
         $stats   = $amb_obj ? $amb_obj->lifetime_stats() : [ 'total_orders' => 0, 'total_commission' => 0 ];
@@ -95,7 +120,7 @@ $badge_map = [
             <td><span class="oe-amb-badge <?php echo esc_attr( $badge_map[ $row->status ] ?? 'oe-amb-badge-muted' ); ?>"><?php echo esc_html( ucfirst( $row->status ) ); ?></span></td>
             <td><?php echo esc_html( gmdate( 'd M Y', strtotime( $row->applied_at ) ) ); ?></td>
             <td>
-                <a href="<?php echo esc_url( $detail_url ); ?>" class="button button-small"><?php esc_html_e( 'View', 'oe-ambassador' ); ?></a>
+                <a href="<?php echo esc_url( $detail_url ); ?>" class="button button-small"><?php esc_html_e( 'View', 'oe-brand-ambassador-management' ); ?></a>
             </td>
         </tr>
     <?php endforeach; endif; ?>

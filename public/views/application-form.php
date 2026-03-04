@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Ambassador application form view.
  *
@@ -34,8 +34,8 @@ if ( is_user_logged_in() ) {
         <div class="oe-amb-apply-hero-badge">AMBASSADOR PROGRAM</div>
         <h1 class="oe-amb-apply-title"><?php
         /* translators: %s is the site name */
-        printf( esc_html__( 'Join the %s Family', 'oe-ambassador' ), esc_html( $site_name ) ); ?></h1>
-        <p class="oe-amb-apply-sub"><?php esc_html_e( 'Share what you love. Earn commissions. Get exclusive perks.', 'oe-ambassador' ); ?></p>
+        printf( esc_html__( 'Join the %s Family', 'oe-brand-ambassador-management' ), esc_html( $site_name ) ); ?></h1>
+        <p class="oe-amb-apply-sub"><?php esc_html_e( 'Share what you love. Earn commissions. Get exclusive perks.', 'oe-brand-ambassador-management' ); ?></p>
     </div>
 
     <!-- Benefits -->
@@ -44,29 +44,29 @@ if ( is_user_logged_in() ) {
             <div class="oe-amb-benefit-icon">🎁</div>
             <strong><?php
             /* translators: %d is the customer discount percentage */
-            printf( esc_html__( '%d%% off for your followers', 'oe-ambassador' ), (int) $customer_pct ); ?></strong>
-            <p><?php esc_html_e( 'Your unique code gives your audience an exclusive discount.', 'oe-ambassador' ); ?></p>
+            printf( esc_html__( '%d%% off for your followers', 'oe-brand-ambassador-management' ), (int) $customer_pct ); ?></strong>
+            <p><?php esc_html_e( 'Your unique code gives your audience an exclusive discount.', 'oe-brand-ambassador-management' ); ?></p>
         </div>
         <div class="oe-amb-benefit">
             <div class="oe-amb-benefit-icon">💰</div>
-            <strong><?php esc_html_e( 'Earn up to 20% commission', 'oe-ambassador' ); ?></strong>
-            <p><?php esc_html_e( 'Tiered commissions that grow with your sales volume.', 'oe-ambassador' ); ?></p>
+            <strong><?php esc_html_e( 'Earn up to 20% commission', 'oe-brand-ambassador-management' ); ?></strong>
+            <p><?php esc_html_e( 'Tiered commissions that grow with your sales volume.', 'oe-brand-ambassador-management' ); ?></p>
         </div>
         <div class="oe-amb-benefit">
             <div class="oe-amb-benefit-icon">🛍️</div>
-            <strong><?php esc_html_e( 'Personal discount on all orders', 'oe-ambassador' ); ?></strong>
-            <p><?php esc_html_e( "You get your own code for all your personal purchases.", 'oe-ambassador' ); ?></p>
+            <strong><?php esc_html_e( 'Personal discount on all orders', 'oe-brand-ambassador-management' ); ?></strong>
+            <p><?php esc_html_e( "You get your own code for all your personal purchases.", 'oe-brand-ambassador-management' ); ?></p>
         </div>
         <div class="oe-amb-benefit">
             <div class="oe-amb-benefit-icon">📊</div>
-            <strong><?php esc_html_e( 'Real-time dashboard', 'oe-ambassador' ); ?></strong>
-            <p><?php esc_html_e( 'Track your sales, commissions, and monthly reports.', 'oe-ambassador' ); ?></p>
+            <strong><?php esc_html_e( 'Real-time dashboard', 'oe-brand-ambassador-management' ); ?></strong>
+            <p><?php esc_html_e( 'Track your sales, commissions, and monthly reports.', 'oe-brand-ambassador-management' ); ?></p>
         </div>
     </div>
 
     <!-- Tier overview -->
     <div class="oe-amb-tier-overview">
-        <h3><?php esc_html_e( 'Commission Tiers', 'oe-ambassador' ); ?></h3>
+        <h3><?php esc_html_e( 'Commission Tiers', 'oe-brand-ambassador-management' ); ?></h3>
         <div class="oe-amb-tiers">
         <?php foreach ( $tiers as $i => $tier ) :
             $max_label = ( (int) $tier['max'] === -1 ) ? '+' : '–' . $tier['max'];
@@ -78,66 +78,66 @@ if ( is_user_logged_in() ) {
             </div>
         <?php endforeach; ?>
         </div>
-        <p class="oe-amb-tier-note"><?php esc_html_e( 'Commission calculated on net order value (excl. tax & shipping).', 'oe-ambassador' ); ?></p>
+        <p class="oe-amb-tier-note"><?php esc_html_e( 'Commission calculated on net order value (excl. tax & shipping).', 'oe-brand-ambassador-management' ); ?></p>
     </div>
 
     <!-- Application form -->
     <div class="oe-amb-apply-form-wrap">
-        <h2><?php esc_html_e( 'Apply Now', 'oe-ambassador' ); ?></h2>
+        <h2><?php esc_html_e( 'Apply Now', 'oe-brand-ambassador-management' ); ?></h2>
 
         <div id="oe-amb-apply-msg" class="oe-amb-apply-msg" style="display:none"></div>
 
         <form id="oe-amb-apply-form" class="oe-amb-form">
             <div class="oe-amb-form-row">
                 <div class="oe-amb-form-group">
-                    <label><?php esc_html_e( 'First Name *', 'oe-ambassador' ); ?></label>
-                    <input type="text" name="first_name" value="<?php echo esc_attr( $prefill_first ); ?>" required placeholder="<?php esc_attr_e( 'Jane', 'oe-ambassador' ); ?>">
+                    <label><?php esc_html_e( 'First Name *', 'oe-brand-ambassador-management' ); ?></label>
+                    <input type="text" name="first_name" value="<?php echo esc_attr( $prefill_first ); ?>" required placeholder="<?php esc_attr_e( 'Jane', 'oe-brand-ambassador-management' ); ?>">
                 </div>
                 <div class="oe-amb-form-group">
-                    <label><?php esc_html_e( 'Last Name *', 'oe-ambassador' ); ?></label>
-                    <input type="text" name="last_name" value="<?php echo esc_attr( $prefill_last ); ?>" required placeholder="<?php esc_attr_e( 'Doe', 'oe-ambassador' ); ?>">
+                    <label><?php esc_html_e( 'Last Name *', 'oe-brand-ambassador-management' ); ?></label>
+                    <input type="text" name="last_name" value="<?php echo esc_attr( $prefill_last ); ?>" required placeholder="<?php esc_attr_e( 'Doe', 'oe-brand-ambassador-management' ); ?>">
                 </div>
             </div>
 
             <div class="oe-amb-form-row">
                 <div class="oe-amb-form-group">
-                    <label><?php esc_html_e( 'Email Address *', 'oe-ambassador' ); ?></label>
+                    <label><?php esc_html_e( 'Email Address *', 'oe-brand-ambassador-management' ); ?></label>
                     <input type="email" name="email" value="<?php echo esc_attr( $prefill_email ); ?>" required placeholder="jane@example.com">
                 </div>
                 <div class="oe-amb-form-group">
-                    <label><?php esc_html_e( 'Phone', 'oe-ambassador' ); ?></label>
+                    <label><?php esc_html_e( 'Phone', 'oe-brand-ambassador-management' ); ?></label>
                     <input type="tel" name="phone" placeholder="+46 70 000 00 00">
                 </div>
             </div>
 
             <div class="oe-amb-form-row">
                 <div class="oe-amb-form-group">
-                    <label><?php esc_html_e( 'Primary Platform *', 'oe-ambassador' ); ?></label>
+                    <label><?php esc_html_e( 'Primary Platform *', 'oe-brand-ambassador-management' ); ?></label>
                     <select name="social_platform" required>
-                        <option value=""><?php esc_html_e( '— Select platform —', 'oe-ambassador' ); ?></option>
+                        <option value=""><?php esc_html_e( '— Select platform —', 'oe-brand-ambassador-management' ); ?></option>
                         <option value="instagram">Instagram</option>
                         <option value="tiktok">TikTok</option>
                         <option value="youtube">YouTube</option>
                         <option value="facebook">Facebook</option>
                         <option value="twitter">Twitter / X</option>
-                        <option value="other"><?php esc_html_e( 'Other', 'oe-ambassador' ); ?></option>
+                        <option value="other"><?php esc_html_e( 'Other', 'oe-brand-ambassador-management' ); ?></option>
                     </select>
                 </div>
                 <div class="oe-amb-form-group">
-                    <label><?php esc_html_e( 'Handle / Username', 'oe-ambassador' ); ?></label>
+                    <label><?php esc_html_e( 'Handle / Username', 'oe-brand-ambassador-management' ); ?></label>
                     <input type="text" name="social_handle" placeholder="@yourusername">
                 </div>
             </div>
 
             <div class="oe-amb-form-group">
-                <label><?php esc_html_e( 'Website / Blog (optional)', 'oe-ambassador' ); ?></label>
+                <label><?php esc_html_e( 'Website / Blog (optional)', 'oe-brand-ambassador-management' ); ?></label>
                 <input type="url" name="website" placeholder="https://yoursite.com">
             </div>
 
             <div class="oe-amb-form-group">
-                <label><?php esc_html_e( 'Why do you want to be an ambassador? *', 'oe-ambassador' ); ?></label>
-                <textarea name="motivation" rows="5" required placeholder="<?php esc_attr_e( 'Tell us about your audience, content style, and why our products are a great fit for you...', 'oe-ambassador' ); ?>"></textarea>
-                <small><?php esc_html_e( 'Minimum 30 characters.', 'oe-ambassador' ); ?></small>
+                <label><?php esc_html_e( 'Why do you want to be an ambassador? *', 'oe-brand-ambassador-management' ); ?></label>
+                <textarea name="motivation" rows="5" required placeholder="<?php esc_attr_e( 'Tell us about your audience, content style, and why our products are a great fit for you...', 'oe-brand-ambassador-management' ); ?>"></textarea>
+                <small><?php esc_html_e( 'Minimum 30 characters.', 'oe-brand-ambassador-management' ); ?></small>
             </div>
 
             <div class="oe-amb-form-group oe-amb-consent">
@@ -146,14 +146,14 @@ if ( is_user_logged_in() ) {
                     <?php
                     printf(
                         /* translators: %s is the terms and conditions link */
-                        esc_html__( 'I agree to the %s and the ambassador program terms.', 'oe-ambassador' ),
-                        '<a href="' . esc_url( $terms_url ) . '" target="_blank">' . esc_html__( 'Terms & Conditions', 'oe-ambassador' ) . '</a>'
+                        esc_html__( 'I agree to the %s and the ambassador program terms.', 'oe-brand-ambassador-management' ),
+                        '<a href="' . esc_url( $terms_url ) . '" target="_blank">' . esc_html__( 'Terms & Conditions', 'oe-brand-ambassador-management' ) . '</a>'
                     ); ?>
                 </label>
             </div>
 
             <button type="submit" class="oe-amb-btn oe-amb-submit-btn" id="oe-amb-submit">
-                <?php esc_html_e( 'Submit Application', 'oe-ambassador' ); ?>
+                <?php esc_html_e( 'Submit Application', 'oe-brand-ambassador-management' ); ?>
             </button>
         </form>
     </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Ambassador model — thin wrapper around a DB row.
  *
@@ -119,10 +119,10 @@ class OE_Amb_Ambassador {
 
 	public function display_status(): string {
 		$map = [
-			'pending'   => __( 'Pending',   'oe-ambassador' ),
-			'approved'  => __( 'Approved',  'oe-ambassador' ),
-			'rejected'  => __( 'Rejected',  'oe-ambassador' ),
-			'suspended' => __( 'Suspended', 'oe-ambassador' ),
+			'pending'   => __( 'Pending',   'oe-brand-ambassador-management' ),
+			'approved'  => __( 'Approved',  'oe-brand-ambassador-management' ),
+			'rejected'  => __( 'Rejected',  'oe-brand-ambassador-management' ),
+			'suspended' => __( 'Suspended', 'oe-brand-ambassador-management' ),
 		];
 		return $map[ $this->status ] ?? ucfirst( $this->status );
 	}
@@ -184,7 +184,7 @@ class OE_Amb_Ambassador {
 		if ( ! $share_text ) {
 			$share_text = sprintf(
 				/* translators: 1: discount percentage, 2: site name, 3: coupon code */
-				__( 'Get %1$d%% off at %2$s with my code: %3$s', 'oe-ambassador' ),
+				__( 'Get %1$d%% off at %2$s with my code: %3$s', 'oe-brand-ambassador-management' ),
 				(int) $this->coupon_pct,
 				get_bloginfo( 'name' ),
 				strtoupper( $this->coupon_code )

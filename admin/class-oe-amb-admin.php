@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Admin panel for OE Ambassador.
  *
@@ -65,25 +65,25 @@ class OE_Amb_Admin {
 		$badge   = $pending ? ' <span class="awaiting-mod">' . $pending . '</span>' : '';
 
 		add_menu_page(
-			__( 'OE Ambassador', 'oe-ambassador' ),
-			__( 'Ambassadors', 'oe-ambassador' ) . $badge,
+			__( 'OE Ambassador', 'oe-brand-ambassador-management' ),
+			__( 'Ambassadors', 'oe-brand-ambassador-management' ) . $badge,
 			'manage_oe_ambassadors',
-			'oe-ambassador',
+			'oe-brand-ambassador-management',
 			[ $this, 'page_dashboard' ],
 			'dashicons-groups',
 			56
 		);
 
-		add_submenu_page( 'oe-ambassador', __( 'Dashboard', 'oe-ambassador' ),   __( 'Dashboard', 'oe-ambassador' ),   'manage_oe_ambassadors', 'oe-ambassador',              [ $this, 'page_dashboard' ] );
-		add_submenu_page( 'oe-ambassador', __( 'Ambassadors', 'oe-ambassador' ), __( 'Ambassadors', 'oe-ambassador' ) . $badge, 'manage_oe_ambassadors', 'oe-ambassador-ambassadors', [ $this, 'page_ambassadors' ] );
-		add_submenu_page( 'oe-ambassador', __( 'Reports', 'oe-ambassador' ),     __( 'Reports', 'oe-ambassador' ),     'manage_oe_ambassadors', 'oe-ambassador-reports',     [ $this, 'page_reports' ] );
-		add_submenu_page( 'oe-ambassador', __( 'Settings', 'oe-ambassador' ),    __( 'Settings', 'oe-ambassador' ),    'manage_oe_ambassadors', 'oe-ambassador-settings',    [ $this, 'page_settings' ] );
+		add_submenu_page( 'oe-brand-ambassador-management', __( 'Dashboard', 'oe-brand-ambassador-management' ),   __( 'Dashboard', 'oe-brand-ambassador-management' ),   'manage_oe_ambassadors', 'oe-brand-ambassador-management',              [ $this, 'page_dashboard' ] );
+		add_submenu_page( 'oe-brand-ambassador-management', __( 'Ambassadors', 'oe-brand-ambassador-management' ), __( 'Ambassadors', 'oe-brand-ambassador-management' ) . $badge, 'manage_oe_ambassadors', 'oe-ambassador-ambassadors', [ $this, 'page_ambassadors' ] );
+		add_submenu_page( 'oe-brand-ambassador-management', __( 'Reports', 'oe-brand-ambassador-management' ),     __( 'Reports', 'oe-brand-ambassador-management' ),     'manage_oe_ambassadors', 'oe-ambassador-reports',     [ $this, 'page_reports' ] );
+		add_submenu_page( 'oe-brand-ambassador-management', __( 'Settings', 'oe-brand-ambassador-management' ),    __( 'Settings', 'oe-brand-ambassador-management' ),    'manage_oe_ambassadors', 'oe-ambassador-settings',    [ $this, 'page_settings' ] );
 	}
 
 	// ── Assets ────────────────────────────────────────────────────────────────
 
 	public function enqueue_assets( string $hook ): void {
-		if ( strpos( $hook, 'oe-ambassador' ) === false ) {
+		if ( strpos( $hook, 'oe-brand-ambassador-management' ) === false ) {
 			return;
 		}
 		wp_enqueue_style(
@@ -103,9 +103,9 @@ class OE_Amb_Admin {
 			'nonce'   => wp_create_nonce( 'oe_amb_admin' ),
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 			'i18n'    => [
-				'confirm_approve' => __( 'Approve this ambassador?', 'oe-ambassador' ),
-				'confirm_reject'  => __( 'Reject this application?', 'oe-ambassador' ),
-				'confirm_payout'  => __( 'Create payout for selected period?', 'oe-ambassador' ),
+				'confirm_approve' => __( 'Approve this ambassador?', 'oe-brand-ambassador-management' ),
+				'confirm_reject'  => __( 'Reject this application?', 'oe-brand-ambassador-management' ),
+				'confirm_payout'  => __( 'Create payout for selected period?', 'oe-brand-ambassador-management' ),
 			],
 		] );
 	}
@@ -138,13 +138,31 @@ class OE_Amb_Admin {
 	public function handle_approve(): void {
 		check_admin_referer( 'oe_amb_approve' );
 		if ( ! current_user_can( 'manage_oe_ambassadors' ) ) {
-			wp_die( esc_html__( 'Permission denied.', 'oe-ambassador' ) );
+			wp_die( esc_html__( 'Permission denied.', 'oe-brand-ambassador-management' ) );
 		}
 
 		$id  = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
 		$amb = OE_Amb_Ambassador::find( $id );
 		if ( ! $amb ) {
-			wp_die( esc_html__( 'Ambassador not found.', 'oe-ambassador' ) );
+			wp_die( esc_html__( 'Ambassador not found.', 'oe-brand-ambassador-management' ) );
+		}
+
+		// Free plan: enforce ambassador limit before approving
+		if ( ! oe_amb_is_pro() ) {
+			$active_count = OE_Amb_DB::count_active_ambassadors();
+			if ( $active_count >= OE_AMB_FREE_LIMIT ) {
+				wp_die(
+					wp_kses(
+						sprintf(
+							/* translators: 1: free ambassador limit, 2: upgrade URL */
+							__( 'The free plan is limited to %1$d ambassadors. <a href="%2$s" target="_blank">Upgrade to Pro</a> for unlimited ambassadors.', 'oe-brand-ambassador-management' ),
+							OE_AMB_FREE_LIMIT,
+							esc_url( oe_amb_upgrade_url() )
+						),
+						[ 'a' => [ 'href' => [], 'target' => [] ] ]
+					)
+				);
+			}
 		}
 
 		// ── Generate discount codes if not set ────────────────────────────────
@@ -161,9 +179,15 @@ class OE_Amb_Admin {
 			$self_code = OE_Amb_Coupon::suggest_self_code( $amb->first_name, $amb->last_name );
 		}
 
+		// Free plan: no self-purchase code or free products
+		if ( ! oe_amb_is_pro() ) {
+			$self_code = '';
+			$self_pct  = 0.0;
+		}
+
 		// Create WC coupons
 		$c1 = OE_Amb_Coupon::create_customer_coupon( $id, $coupon_code, $customer_pct );
-		$c2 = OE_Amb_Coupon::create_self_coupon( $id, $self_code, $self_pct );
+		$c2 = ( oe_amb_is_pro() && $self_code ) ? OE_Amb_Coupon::create_self_coupon( $id, $self_code, $self_pct ) : null;
 
 		if ( is_wp_error( $c1 ) ) {
 			set_transient( 'oe_amb_notice_error_' . get_current_user_id(), $c1->get_error_message(), 60 );
@@ -171,8 +195,8 @@ class OE_Amb_Admin {
 			exit;
 		}
 
-		// Free products
-		$free_products = isset( $_POST['free_products'] )
+		// Free products (Pro only)
+		$free_products = ( oe_amb_is_pro() && isset( $_POST['free_products'] ) )
 			? array_map( 'intval', (array) wp_unslash( $_POST['free_products'] ) )
 			: [];
 
@@ -196,7 +220,7 @@ class OE_Amb_Admin {
 		// Send approval email
 		OE_Amb_Email::send_approval( $amb );
 
-		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Ambassador approved and notified.', 'oe-ambassador' ), 60 );
+		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Ambassador approved and notified.', 'oe-brand-ambassador-management' ), 60 );
 		wp_safe_redirect( admin_url( 'admin.php?page=oe-ambassador-ambassadors&action=view&id=' . $id ) );
 		exit;
 	}
@@ -204,13 +228,13 @@ class OE_Amb_Admin {
 	public function handle_reject(): void {
 		check_admin_referer( 'oe_amb_reject' );
 		if ( ! current_user_can( 'manage_oe_ambassadors' ) ) {
-			wp_die( esc_html__( 'Permission denied.', 'oe-ambassador' ) );
+			wp_die( esc_html__( 'Permission denied.', 'oe-brand-ambassador-management' ) );
 		}
 
 		$id  = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
 		$amb = OE_Amb_Ambassador::find( $id );
 		if ( ! $amb ) {
-			wp_die( esc_html__( 'Ambassador not found.', 'oe-ambassador' ) );
+			wp_die( esc_html__( 'Ambassador not found.', 'oe-brand-ambassador-management' ) );
 		}
 
 		$amb->status = 'rejected';
@@ -219,7 +243,7 @@ class OE_Amb_Admin {
 
 		OE_Amb_Email::send_rejection( $amb );
 
-		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Application rejected. Applicant notified.', 'oe-ambassador' ), 60 );
+		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Application rejected. Applicant notified.', 'oe-brand-ambassador-management' ), 60 );
 		wp_safe_redirect( admin_url( 'admin.php?page=oe-ambassador-ambassadors' ) );
 		exit;
 	}
@@ -227,13 +251,13 @@ class OE_Amb_Admin {
 	public function handle_update(): void {
 		check_admin_referer( 'oe_amb_update' );
 		if ( ! current_user_can( 'manage_oe_ambassadors' ) ) {
-			wp_die( esc_html__( 'Permission denied.', 'oe-ambassador' ) );
+			wp_die( esc_html__( 'Permission denied.', 'oe-brand-ambassador-management' ) );
 		}
 
 		$id  = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
 		$amb = OE_Amb_Ambassador::find( $id );
 		if ( ! $amb ) {
-			wp_die( esc_html__( 'Ambassador not found.', 'oe-ambassador' ) );
+			wp_die( esc_html__( 'Ambassador not found.', 'oe-brand-ambassador-management' ) );
 		}
 
 		$amb->notes         = sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) );
@@ -253,7 +277,7 @@ class OE_Amb_Admin {
 			OE_Amb_Coupon::update_coupon_pct( $amb->self_code, $amb->self_pct );
 		}
 
-		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Ambassador updated.', 'oe-ambassador' ), 60 );
+		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Ambassador updated.', 'oe-brand-ambassador-management' ), 60 );
 		wp_safe_redirect( admin_url( 'admin.php?page=oe-ambassador-ambassadors&action=view&id=' . $id ) );
 		exit;
 	}
@@ -261,7 +285,7 @@ class OE_Amb_Admin {
 	public function handle_save_settings(): void {
 		check_admin_referer( 'oe_amb_save_settings' );
 		if ( ! current_user_can( 'manage_oe_ambassadors' ) ) {
-			wp_die( esc_html__( 'Permission denied.', 'oe-ambassador' ) );
+			wp_die( esc_html__( 'Permission denied.', 'oe-brand-ambassador-management' ) );
 		}
 
 		// General settings
@@ -297,7 +321,7 @@ class OE_Amb_Admin {
 			update_option( 'oe_amb_tiers', $tiers );
 		}
 
-		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Settings saved.', 'oe-ambassador' ), 60 );
+		set_transient( 'oe_amb_notice_success_' . get_current_user_id(), __( 'Settings saved.', 'oe-brand-ambassador-management' ), 60 );
 		wp_safe_redirect( admin_url( 'admin.php?page=oe-ambassador-settings' ) );
 		exit;
 	}
@@ -358,48 +382,48 @@ class OE_Amb_Admin {
 		$settings_url = admin_url( 'admin.php?page=oe-ambassador-settings' );
 		?>
 		<div class="notice notice-info is-dismissible oe-amb-setup-notice" id="oe-amb-setup-notice" style="padding:20px 24px;border-left-color:#c9a96e">
-			<h3 style="margin:0 0 12px;font-size:16px">🎉 <?php esc_html_e( 'OE Ambassador is ready! Here\'s your setup checklist:', 'oe-ambassador' ); ?></h3>
+			<h3 style="margin:0 0 12px;font-size:16px">🎉 <?php esc_html_e( 'OE Ambassador is ready! Here\'s your setup checklist:', 'oe-brand-ambassador-management' ); ?></h3>
 			<ol style="margin:0 0 16px;padding-left:20px;line-height:2">
 				<li>
 					<?php if ( $apply_id ) : ?>
-						✅ <strong><?php esc_html_e( 'Application page created:', 'oe-ambassador' ); ?></strong>
+						✅ <strong><?php esc_html_e( 'Application page created:', 'oe-brand-ambassador-management' ); ?></strong>
 						<a href="<?php echo esc_url( $apply_url ); ?>" target="_blank"><?php echo esc_html( get_the_title( $apply_id ) ); ?></a>
 						— contains the shortcode <code>[oe_amb_apply]</code>
-						(<a href="<?php echo esc_url( $apply_edit ); ?>"><?php esc_html_e( 'edit page', 'oe-ambassador' ); ?></a>)
+						(<a href="<?php echo esc_url( $apply_edit ); ?>"><?php esc_html_e( 'edit page', 'oe-brand-ambassador-management' ); ?></a>)
 					<?php else : ?>
-						⬜ <strong><?php esc_html_e( 'Create an Apply page', 'oe-ambassador' ); ?></strong>
+						⬜ <strong><?php esc_html_e( 'Create an Apply page', 'oe-brand-ambassador-management' ); ?></strong>
 						— add a new page with the shortcode <code>[oe_amb_apply]</code>, then set it in
-						<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Settings', 'oe-ambassador' ); ?></a>
+						<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Settings', 'oe-brand-ambassador-management' ); ?></a>
 					<?php endif; ?>
 				</li>
 				<li>
 					<?php if ( $portal_id ) : ?>
-						✅ <strong><?php esc_html_e( 'Portal page created:', 'oe-ambassador' ); ?></strong>
+						✅ <strong><?php esc_html_e( 'Portal page created:', 'oe-brand-ambassador-management' ); ?></strong>
 						<a href="<?php echo esc_url( $portal_url ); ?>" target="_blank"><?php echo esc_html( get_the_title( $portal_id ) ); ?></a>
 						— contains the shortcode <code>[oe_amb_portal]</code>
-						(<a href="<?php echo esc_url( $portal_edit ); ?>"><?php esc_html_e( 'edit page', 'oe-ambassador' ); ?></a>)
+						(<a href="<?php echo esc_url( $portal_edit ); ?>"><?php esc_html_e( 'edit page', 'oe-brand-ambassador-management' ); ?></a>)
 					<?php else : ?>
-						⬜ <strong><?php esc_html_e( 'Create a Portal page', 'oe-ambassador' ); ?></strong>
+						⬜ <strong><?php esc_html_e( 'Create a Portal page', 'oe-brand-ambassador-management' ); ?></strong>
 						— add a new page with the shortcode <code>[oe_amb_portal]</code>, then set it in
-						<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Settings', 'oe-ambassador' ); ?></a>
+						<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'Settings', 'oe-brand-ambassador-management' ); ?></a>
 					<?php endif; ?>
 				</li>
-				<li>⬜ <strong><?php esc_html_e( 'Review Commission Tiers', 'oe-ambassador' ); ?></strong> —
-					<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'go to Settings →', 'oe-ambassador' ); ?></a>
-					<?php esc_html_e( '(default: 7% / 10% / 15% / 20% based on monthly sales)', 'oe-ambassador' ); ?>
+				<li>⬜ <strong><?php esc_html_e( 'Review Commission Tiers', 'oe-brand-ambassador-management' ); ?></strong> —
+					<a href="<?php echo esc_url( $settings_url ); ?>"><?php esc_html_e( 'go to Settings →', 'oe-brand-ambassador-management' ); ?></a>
+					<?php esc_html_e( '(default: 7% / 10% / 15% / 20% based on monthly sales)', 'oe-brand-ambassador-management' ); ?>
 				</li>
-				<li>⬜ <strong><?php esc_html_e( 'Link to your Apply page from your navigation menu', 'oe-ambassador' ); ?></strong>
+				<li>⬜ <strong><?php esc_html_e( 'Link to your Apply page from your navigation menu', 'oe-brand-ambassador-management' ); ?></strong>
 					<?php if ( $apply_url ) : ?>
 						— <?php
 						/* translators: %s is the page URL */
-						printf( esc_html__( 'URL: %s', 'oe-ambassador' ), '<code>' . esc_html( $apply_url ) . '</code>' ); ?>
+						printf( esc_html__( 'URL: %s', 'oe-brand-ambassador-management' ), '<code>' . esc_html( $apply_url ) . '</code>' ); ?>
 					<?php endif; ?>
 				</li>
 			</ol>
 			<p style="margin:0">
-				<a href="<?php echo esc_url( $settings_url ); ?>" class="button button-primary"><?php esc_html_e( 'Open Settings', 'oe-ambassador' ); ?></a>
+				<a href="<?php echo esc_url( $settings_url ); ?>" class="button button-primary"><?php esc_html_e( 'Open Settings', 'oe-brand-ambassador-management' ); ?></a>
 				&nbsp;
-				<button class="button" onclick="oeDismissSetup()" type="button"><?php esc_html_e( 'Dismiss this notice', 'oe-ambassador' ); ?></button>
+				<button class="button" onclick="oeDismissSetup()" type="button"><?php esc_html_e( 'Dismiss this notice', 'oe-brand-ambassador-management' ); ?></button>
 			</p>
 		</div>
 		<?php
@@ -433,7 +457,7 @@ class OE_Amb_Admin {
 
 		// Create the ambassador role if it doesn't exist
 		if ( ! get_role( 'ambassador' ) ) {
-			add_role( 'ambassador', __( 'Ambassador', 'oe-ambassador' ), [
+			add_role( 'ambassador', __( 'Ambassador', 'oe-brand-ambassador-management' ), [
 				'read'              => true,
 				'manage_ambassador' => true,
 			] );

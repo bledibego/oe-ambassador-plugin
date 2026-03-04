@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Ambassador portal dashboard view.
  * $amb is available from the calling shortcode.
@@ -48,10 +48,10 @@ $com_status_class = [
         <div>
             <h1><?php
             /* translators: %s is the ambassador's first name */
-            printf( esc_html__( 'Welcome back, %s!', 'oe-ambassador' ), esc_html( $amb->first_name ) ); ?></h1>
+            printf( esc_html__( 'Welcome back, %s!', 'oe-brand-ambassador-management' ), esc_html( $amb->first_name ) ); ?></h1>
             <p><?php
             /* translators: %s is the site name */
-            printf( esc_html__( 'Your %s Ambassador Dashboard', 'oe-ambassador' ), esc_html( $site_name ) ); ?></p>
+            printf( esc_html__( 'Your %s Ambassador Dashboard', 'oe-brand-ambassador-management' ), esc_html( $site_name ) ); ?></p>
         </div>
         <div class="oe-amb-portal-tier-badge">
             <?php
@@ -66,7 +66,7 @@ $com_status_class = [
             }
             ?>
             <div class="oe-amb-tier-current"><?php echo $current_tier ? (int) $current_tier['pct'] : 0; ?>%</div>
-            <div class="oe-amb-tier-label"><?php esc_html_e( 'Commission Rate', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-tier-label"><?php esc_html_e( 'Commission Rate', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
 
@@ -85,19 +85,19 @@ $com_status_class = [
     <div class="oe-amb-portal-stats">
         <div class="oe-amb-portal-stat">
             <div class="oe-amb-portal-stat-value"><?php echo (int) $monthly['total_orders']; ?></div>
-            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'Sales This Month', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'Sales This Month', 'oe-brand-ambassador-management' ); ?></div>
         </div>
         <div class="oe-amb-portal-stat">
             <div class="oe-amb-portal-stat-value"><?php echo number_format( $monthly['total_net'], 0 ); ?> <small><?php echo esc_html( $currency ); ?></small></div>
-            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'NET Revenue', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'NET Revenue', 'oe-brand-ambassador-management' ); ?></div>
         </div>
         <div class="oe-amb-portal-stat highlighted">
             <div class="oe-amb-portal-stat-value"><?php echo number_format( $monthly['total_commission'], 2 ); ?> <small><?php echo esc_html( $currency ); ?></small></div>
-            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'Your Commission', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'Your Commission', 'oe-brand-ambassador-management' ); ?></div>
         </div>
         <div class="oe-amb-portal-stat">
             <div class="oe-amb-portal-stat-value"><?php echo (int) $lifetime['total_orders']; ?></div>
-            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'Lifetime Sales', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-portal-stat-label"><?php esc_html_e( 'Lifetime Sales', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
 
@@ -106,15 +106,15 @@ $com_status_class = [
 
         <!-- Codes & Share -->
         <div class="oe-amb-portal-card">
-            <h3><?php esc_html_e( 'Your Discount Codes', 'oe-ambassador' ); ?></h3>
+            <h3><?php esc_html_e( 'Your Discount Codes', 'oe-brand-ambassador-management' ); ?></h3>
 
             <div class="oe-amb-code-block">
                 <div class="oe-amb-code-label"><?php
                 /* translators: %d is the customer discount percentage */
-                printf( esc_html__( 'Customer Code (%d%% off)', 'oe-ambassador' ), (int) $amb->coupon_pct ); ?></div>
+                printf( esc_html__( 'Customer Code (%d%% off)', 'oe-brand-ambassador-management' ), (int) $amb->coupon_pct ); ?></div>
                 <div class="oe-amb-code-display">
                     <span class="oe-amb-code" id="oe-customer-code"><?php echo esc_html( strtoupper( $amb->coupon_code ) ); ?></span>
-                    <button class="oe-amb-copy-btn" data-target="oe-customer-code"><?php esc_html_e( 'Copy', 'oe-ambassador' ); ?></button>
+                    <button class="oe-amb-copy-btn" data-target="oe-customer-code"><?php esc_html_e( 'Copy', 'oe-brand-ambassador-management' ); ?></button>
                 </div>
             </div>
 
@@ -122,17 +122,17 @@ $com_status_class = [
             <div class="oe-amb-code-block" style="margin-top:12px">
                 <div class="oe-amb-code-label"><?php
                 /* translators: %d is the ambassador's self-purchase discount percentage */
-                printf( esc_html__( 'Your Personal Code (%d%% off your orders)', 'oe-ambassador' ), (int) $amb->self_pct ); ?></div>
+                printf( esc_html__( 'Your Personal Code (%d%% off your orders)', 'oe-brand-ambassador-management' ), (int) $amb->self_pct ); ?></div>
                 <div class="oe-amb-code-display">
                     <span class="oe-amb-code oe-amb-code-self" id="oe-self-code"><?php echo esc_html( strtoupper( $amb->self_code ) ); ?></span>
-                    <button class="oe-amb-copy-btn" data-target="oe-self-code"><?php esc_html_e( 'Copy', 'oe-ambassador' ); ?></button>
+                    <button class="oe-amb-copy-btn" data-target="oe-self-code"><?php esc_html_e( 'Copy', 'oe-brand-ambassador-management' ); ?></button>
                 </div>
             </div>
             <?php endif; ?>
 
             <?php if ( ! empty( $amb->free_products ) ) : ?>
             <div class="oe-amb-free-products">
-                <h4>🎁 <?php esc_html_e( 'Your Free Products', 'oe-ambassador' ); ?></h4>
+                <h4>🎁 <?php esc_html_e( 'Your Free Products', 'oe-brand-ambassador-management' ); ?></h4>
                 <ul>
                 <?php foreach ( $amb->free_products as $pid ) :
                     $product = wc_get_product( $pid );
@@ -146,14 +146,14 @@ $com_status_class = [
 
         <!-- Share links -->
         <div class="oe-amb-portal-card">
-            <h3><?php esc_html_e( 'Share & Earn', 'oe-ambassador' ); ?></h3>
-            <p class="oe-amb-share-intro"><?php esc_html_e( 'Share your personal link or code to earn commissions.', 'oe-ambassador' ); ?></p>
+            <h3><?php esc_html_e( 'Share & Earn', 'oe-brand-ambassador-management' ); ?></h3>
+            <p class="oe-amb-share-intro"><?php esc_html_e( 'Share your personal link or code to earn commissions.', 'oe-brand-ambassador-management' ); ?></p>
 
             <div class="oe-amb-code-block">
-                <div class="oe-amb-code-label"><?php esc_html_e( 'Your referral link', 'oe-ambassador' ); ?></div>
+                <div class="oe-amb-code-label"><?php esc_html_e( 'Your referral link', 'oe-brand-ambassador-management' ); ?></div>
                 <div class="oe-amb-code-display">
                     <span class="oe-amb-code" id="oe-ref-url" style="font-size:11px;font-family:monospace"><?php echo esc_html( $ref_url ); ?></span>
-                    <button class="oe-amb-copy-btn" data-target="oe-ref-url"><?php esc_html_e( 'Copy', 'oe-ambassador' ); ?></button>
+                    <button class="oe-amb-copy-btn" data-target="oe-ref-url"><?php esc_html_e( 'Copy', 'oe-brand-ambassador-management' ); ?></button>
                 </div>
             </div>
 
@@ -167,7 +167,7 @@ $com_status_class = [
             <p class="oe-amb-share-tip">
                 <?php printf(
                     /* translators: %s is the ambassador's coupon code */
-                    esc_html__( 'On Instagram or TikTok? Mention code %s in your post/story.', 'oe-ambassador' ),
+                    esc_html__( 'On Instagram or TikTok? Mention code %s in your post/story.', 'oe-brand-ambassador-management' ),
                     '<strong>' . esc_html( strtoupper( $amb->coupon_code ) ) . '</strong>'
                 ); ?>
             </p>
@@ -176,7 +176,7 @@ $com_status_class = [
 
     <!-- Tier progress -->
     <div class="oe-amb-portal-card oe-amb-tiers-card">
-        <h3><?php esc_html_e( 'Commission Tiers', 'oe-ambassador' ); ?></h3>
+        <h3><?php esc_html_e( 'Commission Tiers', 'oe-brand-ambassador-management' ); ?></h3>
         <div class="oe-amb-tiers">
         <?php foreach ( $tiers as $i => $tier ) :
             $min = (int) $tier['min'];
@@ -185,7 +185,7 @@ $com_status_class = [
             $max_label = ( $max === -1 ) ? '+' : '–' . $max;
         ?>
             <div class="oe-amb-tier-card <?php echo $is_active ? 'active' : ''; ?>">
-                <?php if ( $is_active ) : ?><div class="oe-amb-tier-active-badge">✓ <?php esc_html_e( 'Current', 'oe-ambassador' ); ?></div><?php endif; ?>
+                <?php if ( $is_active ) : ?><div class="oe-amb-tier-active-badge">✓ <?php esc_html_e( 'Current', 'oe-brand-ambassador-management' ); ?></div><?php endif; ?>
                 <div class="oe-amb-tier-num">Tier <?php echo absint( $i + 1 ); ?></div>
                 <div class="oe-amb-tier-pct"><?php echo (int) $tier['pct']; ?>%</div>
                 <div class="oe-amb-tier-range"><?php echo esc_html( $min . $max_label . ' sales' ); ?></div>
@@ -207,7 +207,7 @@ $com_status_class = [
         <p class="oe-amb-tier-progress"><?php
         printf(
             /* translators: 1: number of sales needed, 2: commission percentage for next tier */
-            esc_html__( 'You need %1$d more sale(s) this month to reach %2$d%% commission!', 'oe-ambassador' ),
+            esc_html__( 'You need %1$d more sale(s) this month to reach %2$d%% commission!', 'oe-brand-ambassador-management' ),
             absint( $gap ),
             (int) $next_tier['pct']
         ); ?></p>
@@ -218,22 +218,22 @@ $com_status_class = [
     <div class="oe-amb-portal-card">
         <h3><?php
         /* translators: %s is the month and year label */
-        printf( esc_html__( 'Orders — %s', 'oe-ambassador' ), esc_html( $month_label ) ); ?></h3>
+        printf( esc_html__( 'Orders — %s', 'oe-brand-ambassador-management' ), esc_html( $month_label ) ); ?></h3>
 
         <?php if ( empty( $commissions['items'] ) ) : ?>
-        <p class="oe-amb-empty"><?php esc_html_e( 'No sales this month. Share your code to start earning!', 'oe-ambassador' ); ?></p>
+        <p class="oe-amb-empty"><?php esc_html_e( 'No sales this month. Share your code to start earning!', 'oe-brand-ambassador-management' ); ?></p>
         <?php else : ?>
         <div class="oe-amb-table-wrap">
             <table class="oe-amb-table">
                 <thead>
                     <tr>
-                        <th><?php esc_html_e( 'Order', 'oe-ambassador' ); ?></th>
-                        <th><?php esc_html_e( 'Date', 'oe-ambassador' ); ?></th>
-                        <th class="num"><?php esc_html_e( 'Order Total', 'oe-ambassador' ); ?></th>
-                        <th class="num"><?php esc_html_e( 'NET', 'oe-ambassador' ); ?></th>
-                        <th class="num"><?php esc_html_e( 'Tier', 'oe-ambassador' ); ?></th>
-                        <th class="num"><?php esc_html_e( 'Commission', 'oe-ambassador' ); ?></th>
-                        <th><?php esc_html_e( 'Status', 'oe-ambassador' ); ?></th>
+                        <th><?php esc_html_e( 'Order', 'oe-brand-ambassador-management' ); ?></th>
+                        <th><?php esc_html_e( 'Date', 'oe-brand-ambassador-management' ); ?></th>
+                        <th class="num"><?php esc_html_e( 'Order Total', 'oe-brand-ambassador-management' ); ?></th>
+                        <th class="num"><?php esc_html_e( 'NET', 'oe-brand-ambassador-management' ); ?></th>
+                        <th class="num"><?php esc_html_e( 'Tier', 'oe-brand-ambassador-management' ); ?></th>
+                        <th class="num"><?php esc_html_e( 'Commission', 'oe-brand-ambassador-management' ); ?></th>
+                        <th><?php esc_html_e( 'Status', 'oe-brand-ambassador-management' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -251,7 +251,7 @@ $com_status_class = [
                 </tbody>
                 <tfoot>
                     <tr class="oe-amb-table-total">
-                        <td colspan="5"><?php esc_html_e( 'Total', 'oe-ambassador' ); ?></td>
+                        <td colspan="5"><?php esc_html_e( 'Total', 'oe-brand-ambassador-management' ); ?></td>
                         <td class="num"><?php echo number_format( $commissions['sum_commission'], 2 ); ?> <?php echo esc_html( $currency ); ?></td>
                         <td></td>
                     </tr>
@@ -260,7 +260,7 @@ $com_status_class = [
         </div>
 
         <p class="oe-amb-com-note">
-            <?php esc_html_e( 'NET = order total − tax − shipping. Commission = NET × your tier %.', 'oe-ambassador' ); ?>
+            <?php esc_html_e( 'NET = order total − tax − shipping. Commission = NET × your tier %.', 'oe-brand-ambassador-management' ); ?>
         </p>
         <?php endif; ?>
     </div>
@@ -268,17 +268,17 @@ $com_status_class = [
     <!-- Payment history -->
     <?php if ( ! empty( $payouts['items'] ) ) : ?>
     <div class="oe-amb-portal-card">
-        <h3><?php esc_html_e( 'Payment History', 'oe-ambassador' ); ?></h3>
+        <h3><?php esc_html_e( 'Payment History', 'oe-brand-ambassador-management' ); ?></h3>
         <div class="oe-amb-table-wrap">
             <table class="oe-amb-table">
                 <thead>
                     <tr>
-                        <th><?php esc_html_e( 'Period', 'oe-ambassador' ); ?></th>
-                        <th class="num"><?php esc_html_e( 'Sales', 'oe-ambassador' ); ?></th>
-                        <th class="num"><?php esc_html_e( 'Tier', 'oe-ambassador' ); ?></th>
-                        <th class="num"><?php esc_html_e( 'Amount', 'oe-ambassador' ); ?></th>
-                        <th><?php esc_html_e( 'Status', 'oe-ambassador' ); ?></th>
-                        <th><?php esc_html_e( 'Paid', 'oe-ambassador' ); ?></th>
+                        <th><?php esc_html_e( 'Period', 'oe-brand-ambassador-management' ); ?></th>
+                        <th class="num"><?php esc_html_e( 'Sales', 'oe-brand-ambassador-management' ); ?></th>
+                        <th class="num"><?php esc_html_e( 'Tier', 'oe-brand-ambassador-management' ); ?></th>
+                        <th class="num"><?php esc_html_e( 'Amount', 'oe-brand-ambassador-management' ); ?></th>
+                        <th><?php esc_html_e( 'Status', 'oe-brand-ambassador-management' ); ?></th>
+                        <th><?php esc_html_e( 'Paid', 'oe-brand-ambassador-management' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Email notifications for OE Ambassador.
  *
@@ -80,7 +80,7 @@ class OE_Amb_Email {
 	public static function send_new_application_admin( OE_Amb_Ambassador $amb ): void {
 		$admin_email  = OE_Ambassador::setting( 'notify_admin_email', get_option( 'admin_email' ) );
 		/* translators: %s is the ambassador's full name */
-		$subject      = sprintf( __( 'New Ambassador Application: %s', 'oe-ambassador' ), $amb->full_name() );
+		$subject      = sprintf( __( 'New Ambassador Application: %s', 'oe-brand-ambassador-management' ), $amb->full_name() );
 		$review_url   = admin_url( 'admin.php?page=oe-ambassador-ambassadors&action=view&id=' . $amb->id );
 
 		ob_start();
@@ -110,7 +110,7 @@ class OE_Amb_Email {
 	public static function send_approval( OE_Amb_Ambassador $amb ): void {
 		$portal_page_id = (int) OE_Ambassador::setting( 'portal_page_id', 0 );
 		$portal_url     = $portal_page_id ? get_permalink( $portal_page_id ) : home_url( '/ambassador' );
-		$subject        = __( 'Welcome to the Ambassador Program! 🎉', 'oe-ambassador' );
+		$subject        = __( 'Welcome to the Ambassador Program! 🎉', 'oe-brand-ambassador-management' );
 
 		ob_start();
 		?>
@@ -178,7 +178,7 @@ echo '</ul>';
 	 * Send rejection email.
 	 */
 	public static function send_rejection( OE_Amb_Ambassador $amb ): void {
-		$subject = __( 'Your Ambassador Application', 'oe-ambassador' );
+		$subject = __( 'Your Ambassador Application', 'oe-brand-ambassador-management' );
 
 		ob_start();
 		?>
@@ -203,7 +203,7 @@ echo '</ul>';
 	public static function send_monthly_report( OE_Amb_Ambassador $amb, string $month, array $commissions ): void {
 		$month_label = gmdate( 'F Y', strtotime( $month . '-01' ) );
 		/* translators: %s is the month and year, e.g. "January 2025" */
-		$subject     = sprintf( __( 'Your Ambassador Report — %s', 'oe-ambassador' ), $month_label );
+		$subject     = sprintf( __( 'Your Ambassador Report — %s', 'oe-brand-ambassador-management' ), $month_label );
 		$portal_url  = get_permalink( (int) OE_Ambassador::setting( 'portal_page_id', 0 ) ) ?: home_url( '/ambassador' );
 		$currency    = OE_Ambassador::setting( 'currency', 'SEK' );
 		$total_pct   = OE_Ambassador::tier_pct( $commissions['total'] );
@@ -285,7 +285,7 @@ echo '</ul>';
 		$admin_email = OE_Ambassador::setting( 'notify_admin_email', get_option( 'admin_email' ) );
 		$month_label = gmdate( 'F Y', strtotime( $month . '-01' ) );
 		/* translators: %s is the month and year, e.g. "January 2025" */
-		$subject     = sprintf( __( 'Ambassador Program Summary — %s', 'oe-ambassador' ), $month_label );
+		$subject     = sprintf( __( 'Ambassador Program Summary — %s', 'oe-brand-ambassador-management' ), $month_label );
 		$admin_url   = admin_url( 'admin.php?page=oe-ambassador-reports' );
 
 		ob_start();
@@ -322,7 +322,7 @@ echo '</ul>';
 	 * Payout notification to ambassador.
 	 */
 	public static function send_payout_notification( OE_Amb_Ambassador $amb, object $payout ): void {
-		$subject     = __( 'Commission Payment Processed! 💸', 'oe-ambassador' );
+		$subject     = __( 'Commission Payment Processed! 💸', 'oe-brand-ambassador-management' );
 		$currency    = $payout->currency;
 		$portal_url  = get_permalink( (int) OE_Ambassador::setting( 'portal_page_id', 0 ) ) ?: home_url( '/ambassador' );
 

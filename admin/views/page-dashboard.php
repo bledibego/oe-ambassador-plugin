@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Admin Dashboard view.
  *
@@ -29,7 +29,7 @@ $currency = OE_Ambassador::setting( 'currency', 'SEK' );
 $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
 ?>
 <div class="wrap oe-amb-wrap">
-<h1 class="wp-heading-inline"><?php esc_html_e( 'Ambassador Dashboard', 'oe-ambassador' ); ?></h1>
+<h1 class="wp-heading-inline"><?php esc_html_e( 'Ambassador Dashboard', 'oe-brand-ambassador-management' ); ?></h1>
 <hr class="wp-header-end">
 
 <!-- Stat cards -->
@@ -38,28 +38,28 @@ $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
         <div class="oe-amb-stat-icon" style="background:#fff3e0;color:#e65100">⏳</div>
         <div>
             <div class="oe-amb-stat-value"><?php echo (int) $stats_pending; ?></div>
-            <div class="oe-amb-stat-label"><?php esc_html_e( 'Pending Applications', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-stat-label"><?php esc_html_e( 'Pending Applications', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
     <div class="oe-amb-stat-card">
         <div class="oe-amb-stat-icon" style="background:#e8f5e9;color:#2e7d32">✓</div>
         <div>
             <div class="oe-amb-stat-value"><?php echo (int) $stats_approved; ?></div>
-            <div class="oe-amb-stat-label"><?php esc_html_e( 'Active Ambassadors', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-stat-label"><?php esc_html_e( 'Active Ambassadors', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
     <div class="oe-amb-stat-card">
         <div class="oe-amb-stat-icon" style="background:#e3f2fd;color:#1565c0">🛍</div>
         <div>
             <div class="oe-amb-stat-value"><?php echo (int) $this_month_sales; ?></div>
-            <div class="oe-amb-stat-label"><?php esc_html_e( 'Sales This Month', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-stat-label"><?php esc_html_e( 'Sales This Month', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
     <div class="oe-amb-stat-card">
         <div class="oe-amb-stat-icon" style="background:#f3e5f5;color:#6a1b9a">💰</div>
         <div>
             <div class="oe-amb-stat-value"><?php echo number_format( $this_month_comm, 0 ); ?> <small><?php echo esc_html( $currency ); ?></small></div>
-            <div class="oe-amb-stat-label"><?php esc_html_e( 'Commissions This Month', 'oe-ambassador' ); ?></div>
+            <div class="oe-amb-stat-label"><?php esc_html_e( 'Commissions This Month', 'oe-brand-ambassador-management' ); ?></div>
         </div>
     </div>
 </div>
@@ -68,17 +68,17 @@ $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
     <!-- Recent applications -->
     <div class="oe-amb-card" style="flex:2">
         <div class="oe-amb-card-header">
-            <h2><?php esc_html_e( 'Recent Applications', 'oe-ambassador' ); ?></h2>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-ambassadors' ) ); ?>" class="button"><?php esc_html_e( 'View All', 'oe-ambassador' ); ?></a>
+            <h2><?php esc_html_e( 'Recent Applications', 'oe-brand-ambassador-management' ); ?></h2>
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-ambassadors' ) ); ?>" class="button"><?php esc_html_e( 'View All', 'oe-brand-ambassador-management' ); ?></a>
         </div>
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th><?php esc_html_e( 'Name', 'oe-ambassador' ); ?></th>
-                    <th><?php esc_html_e( 'Email', 'oe-ambassador' ); ?></th>
-                    <th><?php esc_html_e( 'Platform', 'oe-ambassador' ); ?></th>
-                    <th><?php esc_html_e( 'Status', 'oe-ambassador' ); ?></th>
-                    <th><?php esc_html_e( 'Applied', 'oe-ambassador' ); ?></th>
+                    <th><?php esc_html_e( 'Name', 'oe-brand-ambassador-management' ); ?></th>
+                    <th><?php esc_html_e( 'Email', 'oe-brand-ambassador-management' ); ?></th>
+                    <th><?php esc_html_e( 'Platform', 'oe-brand-ambassador-management' ); ?></th>
+                    <th><?php esc_html_e( 'Status', 'oe-brand-ambassador-management' ); ?></th>
+                    <th><?php esc_html_e( 'Applied', 'oe-brand-ambassador-management' ); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -99,7 +99,7 @@ $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
                 </tr>
             <?php endforeach; ?>
             <?php if ( empty( $recent['items'] ) ) : ?>
-                <tr><td colspan="5" style="text-align:center;padding:24px;color:#888"><?php esc_html_e( 'No applications yet.', 'oe-ambassador' ); ?></td></tr>
+                <tr><td colspan="5" style="text-align:center;padding:24px;color:#888"><?php esc_html_e( 'No applications yet.', 'oe-brand-ambassador-management' ); ?></td></tr>
             <?php endif; ?>
             </tbody>
         </table>
@@ -108,17 +108,17 @@ $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
     <!-- Top ambassadors -->
     <div class="oe-amb-card" style="flex:1">
         <div class="oe-amb-card-header">
-            <h2><?php esc_html_e( 'Top Ambassadors', 'oe-ambassador' ); ?></h2>
+            <h2><?php esc_html_e( 'Top Ambassadors', 'oe-brand-ambassador-management' ); ?></h2>
         </div>
         <?php if ( empty( $commission_sum ) ) : ?>
-            <p style="text-align:center;color:#888;padding:24px"><?php esc_html_e( 'No commission data yet.', 'oe-ambassador' ); ?></p>
+            <p style="text-align:center;color:#888;padding:24px"><?php esc_html_e( 'No commission data yet.', 'oe-brand-ambassador-management' ); ?></p>
         <?php else : ?>
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th><?php esc_html_e( 'Ambassador', 'oe-ambassador' ); ?></th>
-                    <th style="text-align:right"><?php esc_html_e( 'Sales', 'oe-ambassador' ); ?></th>
-                    <th style="text-align:right"><?php esc_html_e( 'Commission', 'oe-ambassador' ); ?></th>
+                    <th><?php esc_html_e( 'Ambassador', 'oe-brand-ambassador-management' ); ?></th>
+                    <th style="text-align:right"><?php esc_html_e( 'Sales', 'oe-brand-ambassador-management' ); ?></th>
+                    <th style="text-align:right"><?php esc_html_e( 'Commission', 'oe-brand-ambassador-management' ); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -142,9 +142,9 @@ $recent   = OE_Amb_DB::get_ambassadors( [ 'per_page' => 5 ] );
         <div class="notice notice-warning inline" style="margin:16px;border-radius:6px">
             <p><?php
             /* translators: %d is the number of commissions awaiting approval */
-            printf( esc_html__( '%d commission(s) awaiting approval.', 'oe-ambassador' ), absint( $pending_comm ) );
+            printf( esc_html__( '%d commission(s) awaiting approval.', 'oe-brand-ambassador-management' ), absint( $pending_comm ) );
             ?>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-reports' ) ); ?>"><?php esc_html_e( 'Review', 'oe-ambassador' ); ?></a></p>
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=oe-ambassador-reports' ) ); ?>"><?php esc_html_e( 'Review', 'oe-brand-ambassador-management' ); ?></a></p>
         </div>
         <?php endif; ?>
     </div>

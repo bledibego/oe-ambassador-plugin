@@ -156,6 +156,12 @@ class OE_Amb_Commission {
 			wp_send_json_error( 'Permission denied.' );
 		}
 
+		// Pro feature: payout management
+		if ( ! oe_amb_is_pro() ) {
+			wp_send_json_error( esc_html__( 'Payout management requires Pro. Upgrade to unlock this feature.', 'oe-brand-ambassador-management' ) );
+			return;
+		}
+
 		$ambassador_id = absint( wp_unslash( $_POST['ambassador_id'] ?? 0 ) );
 		$date_from     = sanitize_text_field( wp_unslash( $_POST['date_from'] ?? '' ) );
 		$date_to       = sanitize_text_field( wp_unslash( $_POST['date_to'] ?? '' ) );

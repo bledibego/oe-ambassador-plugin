@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * WooCommerce coupon management for ambassadors.
  *
@@ -44,7 +44,7 @@ class OE_Amb_Coupon {
 		$code = strtolower( sanitize_text_field( $code ) );
 
 		if ( self::coupon_exists( $code ) ) {
-			return new WP_Error( 'coupon_exists', __( 'This coupon code is already in use. Please choose another.', 'oe-ambassador' ) );
+			return new WP_Error( 'coupon_exists', __( 'This coupon code is already in use. Please choose another.', 'oe-brand-ambassador-management' ) );
 		}
 
 		$coupon = new WC_Coupon();
@@ -74,7 +74,7 @@ class OE_Amb_Coupon {
 		$coupon_id = $coupon->save();
 
 		if ( ! $coupon_id || is_wp_error( $coupon_id ) ) {
-			return new WP_Error( 'coupon_save_fail', __( 'Failed to save coupon.', 'oe-ambassador' ) );
+			return new WP_Error( 'coupon_save_fail', __( 'Failed to save coupon.', 'oe-brand-ambassador-management' ) );
 		}
 
 		update_post_meta( $coupon_id, self::AMBASSADOR_META, $ambassador_id );

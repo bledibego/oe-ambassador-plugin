@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * WP-Cron tasks for OE Ambassador.
  *
@@ -55,7 +55,7 @@ class OE_Amb_Cron {
 		if ( ! isset( $schedules['monthly'] ) ) {
 			$schedules['monthly'] = [
 				'interval' => MONTH_IN_SECONDS,
-				'display'  => __( 'Once Monthly', 'oe-ambassador' ),
+				'display'  => __( 'Once Monthly', 'oe-brand-ambassador-management' ),
 			];
 		}
 		return $schedules;
@@ -68,6 +68,11 @@ class OE_Amb_Cron {
 	 * Runs on the 1st of each month for the previous month's data.
 	 */
 	public function send_monthly_reports(): void {
+		// Pro feature only — free plan does not send email reports
+		if ( ! oe_amb_is_pro() ) {
+			return;
+		}
+
 		// Previous month
 		$prev_month  = gmdate( 'Y-m', strtotime( 'first day of last month' ) );
 		[ $y, $m ]   = explode( '-', $prev_month );
@@ -108,6 +113,11 @@ class OE_Amb_Cron {
 	 * Only runs if 'auto_approve_days' setting > 0.
 	 */
 	public function auto_approve_old_commissions(): void {
+		// Pro feature only
+		if ( ! oe_amb_is_pro() ) {
+			return;
+		}
+
 		$days = (int) OE_Ambassador::setting( 'auto_approve_days', 0 );
 		if ( $days <= 0 ) {
 			return;
