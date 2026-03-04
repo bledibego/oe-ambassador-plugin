@@ -60,7 +60,7 @@ if ( ! function_exists( 'oe_amb_fs' ) ) {
 				'is_require_payment' => true,
 			),
 			'menu'                => array(
-				'slug'    => 'oe-amb-dashboard',
+				'slug'    => 'oe-brand-ambassador-management',
 				'contact' => true,
 				'support' => false,
 			),
@@ -72,4 +72,41 @@ if ( ! function_exists( 'oe_amb_fs' ) ) {
 	}
 
 	oe_amb_fs();
+
+	// Hook cleanup to Freemius after_uninstall so Freemius can report
+	// the uninstall event to its server before our data is wiped.
+	if ( function_exists( 'oe_amb_fs' ) && oe_amb_fs() ) {
+		oe_amb_fs()->add_action( 'after_uninstall', 'oe_amb_fs_uninstall_cleanup' );
+	}
+}
+
+if ( ! function_exists( 'oe_amb_fs_uninstall_cleanup' ) ) {
+	/**
+	 * Removes all plugin data when the plugin is deleted.
+	 * Hooked to Freemius after_uninstall so uninstall telemetry is sent first.
+	 */
+	function oe_amb_fs_uninstall_cleanup(): void {
+		global $wpdb;
+
+		// Drop custom tables.
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_amb_payouts" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_amb_commissions" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}oe_ambassadors" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+
+		// Delete options.
+		delete_option( 'oe_amb_settings' );
+		delete_option( 'oe_amb_tiers' );
+		delete_option( 'oe_amb_db_version' );
+
+		// Remove scheduled cron events.
+		wp_clear_scheduled_hook( 'oe_amb_monthly_reports' );
+		wp_clear_scheduled_hook( 'oe_amb_auto_approve' );
+
+		// Remove ambassador role and capability.
+		remove_role( 'ambassador' );
+		$admin = get_role( 'administrator' );
+		if ( $admin ) {
+			$admin->remove_cap( 'manage_oe_ambassadors' );
+		}
+	}
 }
