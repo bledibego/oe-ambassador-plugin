@@ -1,20 +1,13 @@
-# WordPress
-*.log
+# Freemius SDK (downloaded separately — not committed to repo)
+vendor/
+
+# OS files
 .DS_Store
 Thumbs.db
-
-# Build artifacts
-/vendor/
-/node_modules/
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Composer
-composer.lock
-
-# Local dev config
-.env
+# Node (if ever used for build tools)
+node_modules/
